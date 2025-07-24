@@ -1,1 +1,1 @@
-# ikigai.html
+# ikigai
