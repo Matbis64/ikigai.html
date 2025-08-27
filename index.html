@@ -3,282 +3,1124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant Interactif Ikigai - LS4YOU</title>
+    <title>RIO - Responsable Innovation & Outillage MLPB</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body {
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
-        .wizard-step {
-            display: none;
+        
+        .slide {
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.6s ease-in-out;
         }
-        .wizard-step.active {
-            display: block;
-            animation: fadeIn 0.5s;
+        
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        
+        .nav-dot {
+            transition: all 0.3s ease;
         }
-        .tag {
-            transition: background-color 0.3s;
-        }
-        .tag-remove:hover {
+        
+        .nav-dot.active {
+            background: #3B82F6;
             transform: scale(1.2);
         }
-        /* Final Ikigai Diagram Styles */
-        .ikigai-result-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 1 / 1;
-            margin: 20px auto;
+        
+        .card-hover {
+            transition: all 0.3s ease;
         }
-        .result-circle {
-            position: absolute;
-            border-radius: 50%;
-            box-sizing: border-box;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 20px;
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        .result-circle .content {
-            text-align: center;
-            color: #333;
+        
+        .progress-bar {
+            transition: width 0.8s ease-in-out;
         }
-        .result-circle h4 {
-            font-weight: 700;
-            margin-bottom: 10px;
-            font-size: 1rem;
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
         }
-        .result-circle ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            font-size: 0.8rem;
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #rc1 { background-color: #99F6E4; width: 60%; height: 60%; top: 0; left: 0; }
-        #rc2 { background-color: #FEF08A; width: 60%; height: 60%; top: 0; right: 0; }
-        #rc3 { background-color: #FECACA; width: 60%; height: 60%; bottom: 0; left: 0; }
-        #rc4 { background-color: #A7F3D0; width: 60%; height: 60%; bottom: 0; right: 0; }
-        .center-text {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-weight: 700; font-size: 2rem;
-            color: #F87171; z-index: 5;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .basque-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, #ff6b6b 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #4ecdc4 0%, transparent 50%);
         }
     </style>
 </head>
-<body class="bg-gray-100 p-4 md:p-8">
-
-    <div class="container max-w-2xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="header bg-gradient-to-r from-red-500 to-yellow-400 text-white p-6 text-center">
-            <h1 class="text-2xl md:text-3xl font-bold">Construis ton Ikigai</h1>
-            <p class="mt-2 text-sm md:text-base opacity-90">Un pas à la fois, découvrons ce qui te fait vibrer.</p>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg">
+        <div class="container mx-auto px-6">
+            <h1 class="text-3xl font-bold text-center">RIO - Responsable Innovation & Outillage</h1>
+            <p class="text-center text-blue-100 mt-2">Mission Locale Pays Basque • Fiche de Poste & Plan d'Action</p>
         </div>
+    </header>
 
-        <div class="p-8">
-            <!-- Step 1: Ce que j'aime -->
-            <div id="step-1" class="wizard-step active">
-                <h2 class="text-2xl font-bold text-center text-turquoise-500 mb-2" style="color: #0D9488;">Étape 1: Ce que j'aime ❤️‍🩹</h2>
-                <p class="text-center text-gray-600 mb-6">Liste ici tout ce qui te passionne, te donne de l'énergie ou te rend curieux/curieuse. Ne te censure pas, ça peut être n'importe quoi.</p>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="input-aime" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Dessiner, les jeux vidéo, la nature...">
-                    <button onclick="addItem('aime')" class="bg-turquoise-500 text-white px-4 rounded-md" style="background-color: #2DD4BF;">Ajouter</button>
-                </div>
-                <div id="list-aime" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- Step 2: Ce qui me rend fort -->
-            <div id="step-2" class="wizard-step">
-                <h2 class="text-2xl font-bold text-center text-yellow-500 mb-2" style="color: #FBBF24;">Étape 2: Tes points forts 💪</h2>
-                 <p class="text-center text-gray-600 mb-6">Pense à tes talents et à tes qualités. Dans quoi es-tu naturellement doué(e) ? Quelles sont les compétences que tu as développées, même sans t'en rendre compte ?</p>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="input-fort" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Je suis patient(e), j'explique bien, je suis créatif...">
-                    <button onclick="addItem('fort')" class="bg-yellow-500 text-white px-4 rounded-md" style="background-color: #FBBF24;">Ajouter</button>
-                </div>
-                <div id="list-fort" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- Step 3: Ce pour quoi je peux être payé -->
-            <div id="step-3" class="wizard-step">
-                <h2 class="text-2xl font-bold text-center text-red-500 mb-2" style="color: #F87171;">Étape 3: Tes compétences utiles 💰</h2>
-                <p class="text-center text-gray-600 mb-6">Imagine comment tes talents pourraient devenir un métier ou un service. Pour quelles compétences ou connaissances quelqu'un pourrait te payer ?</p>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="input-paye" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Réparer des vélos, donner des conseils sur les jeux...">
-                    <button onclick="addItem('paye')" class="bg-red-500 text-white px-4 rounded-md" style="background-color: #F87171;">Ajouter</button>
-                </div>
-                <div id="list-paye" class="flex flex-wrap gap-2"></div>
-            </div>
-
-            <!-- Step 4: Ce dont le monde a besoin -->
-            <div id="step-4" class="wizard-step">
-                <h2 class="text-2xl font-bold text-center text-green-500 mb-2" style="color: #34D399;">Étape 4: Ta contribution au monde 🌍</h2>
-                <p class="text-center text-gray-600 mb-6">Réfléchis à l'impact que tu aimerais avoir. Quelles sont les causes qui te touchent ? Comment pourrais-tu contribuer à rendre le monde un peu meilleur, à ta manière ?</p>
-                <div class="flex gap-2 mb-4">
-                    <input type="text" id="input-monde" class="w-full p-2 border border-gray-300 rounded-md" placeholder="Ex: Lutter contre le gaspillage, aider les animaux...">
-                    <button onclick="addItem('monde')" class="bg-green-500 text-white px-4 rounded-md" style="background-color: #34D399;">Ajouter</button>
-                </div>
-                <div id="list-monde" class="flex flex-wrap gap-2"></div>
-            </div>
-            
-            <!-- Step 5: Result -->
-            <div id="step-5" class="wizard-step">
-                <h2 class="text-2xl font-bold text-center text-red-500 mb-4">Voici ton Ikigai ! ✨</h2>
-                <p class="text-center text-gray-600 mb-6">Ceci est une représentation de tes passions, tes talents et tes opportunités. Utilise-le comme une boussole pour guider tes prochains pas.</p>
-                <div id="ikigai-capture">
-                    <div class="ikigai-result-container">
-                        <div id="rc1" class="result-circle"><div id="result-aime" class="content"></div></div>
-                        <div id="rc2" class="result-circle"><div id="result-fort" class="content"></div></div>
-                        <div id="rc3" class="result-circle"><div id="result-paye" class="content"></div></div>
-                        <div id="rc4" class="result-circle"><div id="result-monde" class="content"></div></div>
-                        <div class="center-text">IKIGAI</div>
-                    </div>
-                </div>
-                 <div class="mt-6 text-center">
-                    <button id="download-btn" class="bg-turquoise-500 hover:bg-turquoise-600 text-white font-bold py-2 px-4 rounded-lg transition-colors" style="background-color: #2DD4BF;">
-                        Télécharger mon Ikigai
-                    </button>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-center space-x-4">
+                <div class="flex space-x-2">
+                    <button onclick="showSlide(0)" class="nav-dot w-3 h-3 rounded-full bg-gray-300 active" data-slide="0"></button>
+                    <button onclick="showSlide(1)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="1"></button>
+                    <button onclick="showSlide(2)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="2"></button>
+                    <button onclick="showSlide(3)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="3"></button>
+                    <button onclick="showSlide(4)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="4"></button>
+                    <button onclick="showSlide(5)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="5"></button>
+                    <button onclick="showSlide(6)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="6"></button>
+                    <button onclick="showSlide(7)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="7"></button>
                 </div>
             </div>
-
-            <!-- Navigation -->
-            <div class="flex justify-between mt-8">
-                <button id="prev-btn" onclick="navigate(-1)" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition-colors" style="visibility: hidden;">Précédent</button>
-                <button id="next-btn" onclick="navigate(1)" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition-colors">Suivant</button>
+            <div class="flex justify-center mt-4 space-x-4">
+                <button onclick="prevSlide()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">← Précédent</button>
+                <button onclick="nextSlide()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Suivant →</button>
             </div>
         </div>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div class="bg-gray-200 h-1">
+        <div id="progressBar" class="progress-bar bg-blue-500 h-1" style="width: 14.3%"></div>
     </div>
 
-<script>
-    let currentStep = 1;
-    const totalSteps = 5;
-    const data = {
-        aime: [],
-        fort: [],
-        paye: [],
-        monde: []
-    };
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Slide 1: Mission RIO -->
+        <div id="slide-0" class="slide active">
+            <div class="basque-pattern rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white mb-6 text-center">🎯 Mission du RIO</h2>
+                <p class="text-center text-white text-lg opacity-90">Responsable Innovation & Outillage</p>
+            </div>
+            
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-8 text-white mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">🚀 Mission Principale</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">🔧</span>
+                            Transformer
+                        </h4>
+                        <p class="text-sm opacity-90">Les projets en outils standard (fiches, grilles, checklists, capsules, parcours e-learning)</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">⚡</span>
+                            Assurer
+                        </h4>
+                        <p class="text-sm opacity-90">La qualité et cohérence des méthodes d'accompagnement avec amélioration continue</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">🎓</span>
+                            Professionnaliser
+                        </h4>
+                        <p class="text-sm opacity-90">Les conseillers et outiller les ambassadeurs pour irriguer les antennes</p>
+                    </div>
+                </div>
+            </div>
 
-    const inputs = {
-        aime: document.getElementById('input-aime'),
-        fort: document.getElementById('input-fort'),
-        paye: document.getElementById('input-paye'),
-        monde: document.getElementById('input-monde')
-    };
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">🧱 Projets à Transformer</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-2 bg-blue-50 rounded-lg">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                            <span class="font-medium">ROAMING</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="font-medium">LS4YOU</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-purple-50 rounded-lg">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
+                            <span class="font-medium">Baserriberri</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-orange-50 rounded-lg">
+                            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
+                            <span class="font-medium">Lanean</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-pink-50 rounded-lg">
+                            <div class="w-3 h-3 bg-pink-500 rounded-full"></div>
+                            <span class="font-medium">Take Off Pro</span>
+                        </div>
+                    </div>
+                </div>
 
-    Object.values(inputs).forEach(input => {
-        input.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                const type = event.target.id.split('-')[1];
-                addItem(type);
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">📊 Livrables Standards</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            <span class="text-xl">📋</span>
+                            <span>Fiches réflexes</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            <span class="text-xl">📊</span>
+                            <span>Grilles d'évaluation</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            <span class="text-xl">✅</span>
+                            <span>Checklists process</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            <span class="text-xl">🎥</span>
+                            <span>Capsules vidéo</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
+                            <span class="text-xl">📚</span>
+                            <span>Parcours e-learning</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Relations Clés -->
+        <div id="slide-1" class="slide">
+            <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">🤝 Relations Clés du RIO</h2>
+                <p class="text-center text-green-100 mt-2">Qui fait quoi avec toi</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-red-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🎯</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-red-800">Direction (Pilotage)</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-red-800 text-sm mb-2">Tu proposes, arbitres, reportes</h4>
+                            <div class="text-xs text-red-700">
+                                <p><strong>Tu attends :</strong> arbitrages, priorités, ressources, validation standards</p>
+                                <p><strong>Tu fournis :</strong> tableaux de bord, notes stratégiques, plan diffusion, reporting financeurs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-blue-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🏆</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-800">Ambassadeurs Territoriaux</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 text-sm mb-2">Tes "champions" d'adoption</h4>
+                            <div class="text-xs text-blue-700">
+                                <p><strong>Tu les formes :</strong> Training of Trainers, kits 15-30 min</p>
+                                <p><strong>Ils animent :</strong> mini-sessions locales, tests, remontées besoins</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-green-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">👥</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-green-800">Conseillers CEJ/PACEA</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-green-800 text-sm mb-2">Utilisateurs finaux</h4>
+                            <div class="text-xs text-green-700">
+                                <p><strong>Tu fournis :</strong> fiches réflexes, micro-guides, capsules</p>
+                                <p><strong>Tu organises :</strong> office hours, Help-desk Teams</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-purple-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🛠️</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-purple-800">Appui (Com/SI/Logistique)</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 text-sm mb-2">Industrialiser l'outillage</h4>
+                            <div class="text-xs text-purple-700">
+                                <p><strong>Com' :</strong> calendrier éditorial, packs diffusion</p>
+                                <p><strong>Logistique :</strong> planification ateliers, replays</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-orange-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">📚</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-orange-800">Volontaires SC & Stagiaires</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 text-sm mb-2">Mémoire vivante</h4>
+                            <div class="text-xs text-orange-700">
+                                <p>Capitalisation, témoignages, montage capsules, maquettes supports</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-pink-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🌟</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-pink-800">Jeunes Pairs Ambassadeurs</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-pink-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-pink-800 text-sm mb-2">Preuve sociale</h4>
+                            <div class="text-xs text-pink-700">
+                                <p>Participation ateliers/webinaires, capsules témoignages, présence instances</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Tâches Concrètes -->
+        <div id="slide-2" class="slide">
+            <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">⚙️ Tâches Concrètes du RIO</h2>
+                <p class="text-center text-orange-100 mt-2">Cadence et livrables opérationnels</p>
+            </div>
+
+            <!-- Conception & Standardisation -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-2xl font-bold text-orange-600 mb-6">🔧 Conception & Standardisation</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-blue-800 mb-2">Fiches Réflexes</h4>
+                            <p class="text-sm text-blue-700">1 page A4 • Situation → Action → Ressources</p>
+                            <p class="text-xs text-blue-600 mt-1">Cadence : 2 fiches/mois par projet</p>
+                        </div>
+                        <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-green-800 mb-2">Grilles d'Évaluation</h4>
+                            <p class="text-sm text-green-700">Critères objectifs • Échelles • Seuils</p>
+                            <p class="text-xs text-green-600 mt-1">Cadence : 1 grille/trimestre</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-purple-800 mb-2">Capsules Vidéo</h4>
+                            <p class="text-sm text-purple-700">3-5 min • Témoignages • Tutos</p>
+                            <p class="text-xs text-purple-600 mt-1">Cadence : 1 capsule/mois</p>
+                        </div>
+                        <div class="border-l-4 border-pink-500 pl-4 bg-pink-50 p-4 rounded-r-lg">
+                            <h4 class="font-bold text-pink-800 mb-2">Parcours E-learning</h4>
+                            <p class="text-sm text-pink-700">Modules interactifs • Quiz • Badges</p>
+                            <p class="text-xs text-pink-600 mt-1">Cadence : 1 parcours/semestre</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professionnalisation -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">🎓 Professionnalisation</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                            <span class="text-xl">⏱️</span>
+                            <div>
+                                <h4 class="font-semibold text-green-800">Micro-formations</h4>
+                                <p class="text-sm text-green-600">45-60 min • Format hybride</p>
+                                <p class="text-xs text-green-500">Cadence : 1/mois</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                            <span class="text-xl">🏆</span>
+                            <div>
+                                <h4 class="font-semibold text-blue-800">Kits Ambassadeurs</h4>
+                                <p class="text-sm text-blue-600">15-30 min • Prêts à l'emploi</p>
+                                <p class="text-xs text-blue-500">Cadence : 1 kit/trimestre</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                            <span class="text-xl">🆘</span>
+                            <div>
+                                <h4 class="font-semibold text-purple-800">Office Hours</h4>
+                                <p class="text-sm text-purple-600">Permanences d'appui rapide</p>
+                                <p class="text-xs text-purple-500">Cadence : Bimensuel</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-indigo-600 mb-4">📢 Diffusion</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg">
+                            <span class="text-xl">📅</span>
+                            <div>
+                                <h4 class="font-semibold text-indigo-800">Calendrier Trimestriel</h4>
+                                <p class="text-sm text-indigo-600">Mini-sessions par antenne</p>
+                                <p class="text-xs text-indigo-500">Planning anticipé</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-teal-50 rounded-lg">
+                            <span class="text-xl">📱</span>
+                            <div>
+                                <h4 class="font-semibold text-teal-800">Campagne Com' Interne</h4>
+                                <p class="text-sm text-teal-600">Posts Teams + visuels</p>
+                                <p class="text-xs text-teal-500">Mensuel</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
+                            <span class="text-xl">🎬</span>
+                            <div>
+                                <h4 class="font-semibold text-orange-800">Replays Classés</h4>
+                                <p class="text-sm text-orange-600">Bibliothèque thématique</p>
+                                <p class="text-xs text-orange-500">Mise à jour continue</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Qualité & Gouvernance -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-red-600 mb-4">📊 Qualité & Data</h3>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-red-800 mb-2">Tableau de Bord Adoption</h4>
+                            <ul class="text-sm text-red-700 space-y-1">
+                                <li>• Taux d'usage par CEJ/PACEA</li>
+                                <li>• NPS conseillers</li>
+                                <li>• Temps moyen recherche outil</li>
+                                <li>• "Done = Used"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-purple-600 mb-4">🎯 Gouvernance</h3>
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">Rituels de Pilotage</h4>
+                            <ul class="text-sm text-purple-700 space-y-1">
+                                <li>• Flash report mensuel</li>
+                                <li>• COPIL outillage bimestriel</li>
+                                <li>• Revue indicateurs trimestrielle</li>
+                                <li>• MEP des SOP (procédures)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: 4 Axes Stratégiques -->
+        <div id="slide-3" class="slide">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">🎯 4 Axes Stratégiques du RIO</h2>
+                <p class="text-center text-indigo-100 mt-2">Raisonnement stratégique structurant</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-blue-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🔧</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-800">AXE 1 - Outillage & Innovation</h3>
+                        <p class="text-sm text-blue-600 italic">design → outils opérationnels</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 text-sm">Objectif</h4>
+                            <p class="text-xs text-blue-700">Convertir les projets en standards simples, accessibles et duplicables</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 text-sm">Routines</h4>
+                            <p class="text-xs text-blue-700">Ateliers design thinking, prototypage rapide, tests utilisateurs</p>
+                        </div>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 text-sm">Livrables</h4>
+                            <p class="text-xs text-blue-700">Fiches, grilles, checklists, capsules, parcours e-learning</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-green-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🎓</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-green-800">AXE 2 - Professionnalisation</h3>
+                        <p class="text-sm text-green-600 italic">former → diffuser → ancrer</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-green-800 text-sm">Objectif</h4>
+                            <p class="text-xs text-green-700">Monter en compétences sans alourdir la charge des équipes</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-green-800 text-sm">Routines</h4>
+                            <p class="text-xs text-green-700">Micro-formations (45 min), ToT ambassadeurs, office hours bimensuelles</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-green-800 text-sm">Livrables</h4>
+                            <p class="text-xs text-green-700">Slides + script + démo courte, quiz attestation, replays classés</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-purple-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">📊</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-purple-800">AXE 3 - Gouvernance & Qualité</h3>
+                        <p class="text-sm text-purple-600 italic">piloter → améliorer → sécuriser</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-purple-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 text-sm">Objectif</h4>
+                            <p class="text-xs text-purple-700">Remplacer "projets empilés" par système lisible, mesurable, pérenne</p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 text-sm">Routines</h4>
+                            <p class="text-xs text-purple-700">COPIL bimestriel, flash report mensuel, revue indicateurs trimestrielle</p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 text-sm">Livrables</h4>
+                            <p class="text-xs text-purple-700">Tableaux de bord, SOP (procédures courtes), standards qualité</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-orange-500">
+                    <div class="text-center mb-4">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-2xl">🌍</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-orange-800">AXE 4 - Territoires & Partenariats</h3>
+                        <p class="text-sm text-orange-600 italic">irrigation locale → influence</p>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-orange-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 text-sm">Objectif</h4>
+                            <p class="text-xs text-orange-700">Faire remonter besoins terrain et peser sur l'écosystème</p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 text-sm">Routines</h4>
+                            <p class="text-xs text-orange-700">Observatoire agile, rencontres trimestrielles partenaires clés</p>
+                        </div>
+                        <div class="bg-orange-50 p-3 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 text-sm">Livrables</h4>
+                            <p class="text-xs text-orange-700">Carto freins/solutions, intégration jeunes pairs, influence réseau</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Transmission & Intégration -->
+        <div id="slide-4" class="slide">
+            <div class="bg-gradient-to-r from-teal-500 to-green-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">📊 Transmission & Intégration</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-teal-600 mb-4">📝 Traduire en Livrables</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center space-x-3 p-3 bg-teal-50 rounded-lg">
+                            <span class="text-xl">📋</span>
+                            <span>Fiches LS4YOU</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                            <span class="text-xl">📊</span>
+                            <span>Grilles Roaming</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
+                            <span class="text-xl">📖</span>
+                            <span>Carnet Baserriberri</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">🎯 Diffuser via Ambassadeurs</h3>
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-3xl">⏱️</span>
+                        </div>
+                        <p class="text-lg font-semibold text-green-800">Mini-sessions</p>
+                        <p class="text-green-600">15-30 minutes</p>
+                        <div class="mt-4 p-3 bg-green-50 rounded-lg">
+                            <p class="text-sm text-green-700">Format court et impactant pour une adoption rapide</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white">
+                    <h4 class="font-bold mb-3 flex items-center">
+                        <span class="text-2xl mr-2">🔗</span>
+                        Intégrer CEJ/PACEA
+                    </h4>
+                    <p class="text-sm opacity-90">Au moins 1 outil issu des projets par parcours</p>
+                </div>
+
+                <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-white">
+                    <h4 class="font-bold mb-3 flex items-center">
+                        <span class="text-2xl mr-2">🌟</span>
+                        Valoriser les Jeunes
+                    </h4>
+                    <ul class="text-sm space-y-1 opacity-90">
+                        <li>• Témoignages vidéos</li>
+                        <li>• Book Mobilité</li>
+                        <li>• Webinaires</li>
+                    </ul>
+                </div>
+
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
+                    <h4 class="font-bold mb-3 flex items-center">
+                        <span class="text-2xl mr-2">📈</span>
+                        Évaluer en Continu
+                    </h4>
+                    <p class="text-sm opacity-90">Indicateurs trimestriels partagés</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: RIO -->
+        <div id="slide-5" class="slide">
+            <div class="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">🚀 Intégrateur d'Innovations & Architecte d'Outillage</h2>
+                <p class="text-center text-yellow-100 mt-2">Repositionnement stratégique du rôle</p>
+            </div>
+
+            <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-xl mb-8">
+                <div class="flex items-center mb-4">
+                    <span class="text-2xl mr-3">🔄</span>
+                    <h3 class="text-xl font-bold text-red-800">Changement de Posture</h3>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-100 p-4 rounded-lg">
+                        <h4 class="font-semibold text-red-800 mb-2">❌ Avant : "Je gère des projets"</h4>
+                        <p class="text-sm text-red-700">Pilotage de financements européens isolés</p>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800 mb-2">✅ Maintenant : "J'expérimente des outils durables"</h4>
+                        <p class="text-sm text-green-700">Intégration d'innovations pour l'accompagnement de demain</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-2xl font-bold text-orange-600 mb-6">🎯 Missions Redéfinies</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg">
+                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-bold">🔧</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-blue-800">Intégrer</h4>
+                                <p class="text-sm text-blue-600">Transformer chaque projet en brique du futur service outillage</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-bold">📚</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-green-800">Capitaliser</h4>
+                                <p class="text-sm text-green-600">Créer une bibliothèque d'outils transférables et duplicables</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
+                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-bold">🎓</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-purple-800">Professionnaliser</h4>
+                                <p class="text-sm text-purple-600">Former les conseillers aux nouveaux outils sans surcharge</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4 p-4 bg-orange-50 rounded-lg">
+                            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-bold">🏗️</span>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-orange-800">Structurer</h4>
+                                <p class="text-sm text-orange-600">Architecturer le futur service innovation & outillage</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-2xl font-bold text-yellow-600 mb-6">🧱 Projets = Briques Contributives</h3>
+                    <div class="space-y-3">
+                        <div class="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 rounded-r-lg">
+                            <h4 class="font-semibold text-blue-800">Take Off Pro</h4>
+                            <p class="text-xs text-blue-600">→ Accélérateur mobilité internationale</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50 rounded-r-lg">
+                            <h4 class="font-semibold text-green-800">Baserriberri</h4>
+                            <p class="text-xs text-green-600">→ Modèle chantier-école transfrontalier</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-purple-500 pl-4 py-2 bg-purple-50 rounded-r-lg">
+                            <h4 class="font-semibold text-purple-800">ROAMING</h4>
+                            <p class="text-xs text-purple-600">→ Colonne vertébrale digitale</p>
+                        </div>
+                        
+                        <div class="border-l-4 border-orange-500 pl-4 py-2 bg-orange-50 rounded-r-lg">
+                            <h4 class="font-semibold text-orange-800">Lanean</h4>
+                            <p class="text-xs text-orange-600">→ Service emploi transfrontalier</p>
+                        </div>
+
+                        <div class="border-l-4 border-pink-500 pl-4 py-2 bg-pink-50 rounded-r-lg">
+                            <h4 class="font-semibold text-pink-800">LS4YOU</h4>
+                            <p class="text-xs text-pink-600">→ Méthodologie Life Skills transversale</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white text-center">
+                <h3 class="text-2xl font-bold mb-4">🎯 Vision : Passeur d'Innovation</h3>
+                <p class="text-lg opacity-90">
+                    Je transforme la complexité des projets européens en outils simples, concrets et duplicables 
+                    qui préfigurent le futur service d'accompagnement de la MLPB.
+                </p>
+            </div>
+        </div>
+
+        <!-- Slide 7: Stratégie de Transition -->
+        <div id="slide-6" class="slide">
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">🔄 Stratégie de Transition</h2>
+                <p class="text-center text-emerald-100 mt-2">Vers le poste d'Architecte d'Innovation & Outillage</p>
+            </div>
+
+            <!-- Repositionnement immédiat -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-2xl font-bold text-emerald-600 mb-6">1️⃣ Repositionner le Rôle Dès Maintenant</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-400">
+                        <h4 class="font-bold text-red-800 mb-3">❌ Ancien Discours</h4>
+                        <div class="space-y-2 text-sm text-red-700">
+                            <p>"Je gère des projets européens"</p>
+                            <p>"Je pilote 5 financements"</p>
+                            <p>"Mes projets sont innovants"</p>
+                        </div>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
+                        <h4 class="font-bold text-green-800 mb-3">✅ Nouveau Positionnement</h4>
+                        <div class="space-y-2 text-sm text-green-700">
+                            <p>"J'expérimente des outils durables"</p>
+                            <p>"Je structure le service d'outillage"</p>
+                            <p>"Je transforme l'innovation en outils transférables"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <p class="text-emerald-800 font-medium text-center">
+                        🎯 <strong>Intégrateur d'innovations</strong> : je ne gère pas que des financements, je crée des outils transférables
+                    </p>
+                </div>
+            </div>
+
+            <!-- Projets comme briques -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-2xl font-bold text-teal-600 mb-6">2️⃣ Chaque Projet = Brique Contributive</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                        <h4 class="font-bold text-blue-800 text-sm">Take Off Pro</h4>
+                        <p class="text-xs text-blue-600 mt-1">→ Accélérateur mobilité internationale</p>
+                        <p class="text-xs text-blue-500 mt-1">Outils duplicables pour conseillers</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                        <h4 class="font-bold text-green-800 text-sm">Baserriberri</h4>
+                        <p class="text-xs text-green-600 mt-1">→ Modèle chantier-école transfrontalier</p>
+                        <p class="text-xs text-green-500 mt-1">Outil pédagogique d'insertion</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                        <h4 class="font-bold text-purple-800 text-sm">ROAMING</h4>
+                        <p class="text-xs text-purple-600 mt-1">→ Plateforme digitale</p>
+                        <p class="text-xs text-purple-500 mt-1">Colonne vertébrale de l'outillage</p>
+                    </div>
+                    <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-800 text-sm">Lanean</h4>
+                        <p class="text-xs text-orange-600 mt-1">→ Service emploi transfrontalier</p>
+                        <p class="text-xs text-orange-500 mt-1">Articulation institutionnelle</p>
+                    </div>
+                    <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-500">
+                        <h4 class="font-bold text-pink-800 text-sm">LS4YOU</h4>
+                        <p class="text-xs text-pink-600 mt-1">→ Outils Life Skills</p>
+                        <p class="text-xs text-pink-500 mt-1">Méthodologie transversale</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-teal-50 rounded-lg">
+                    <p class="text-teal-800 font-medium text-center">
+                        🧱 Chaque projet nourrit le futur pôle outillage - Penser intégration plutôt que pilotage séparé
+                    </p>
+                </div>
+            </div>
+
+            <!-- Livrables transversaux -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-indigo-600 mb-4">3️⃣ Livrables Transversaux</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg">
+                            <span class="text-xl">📚</span>
+                            <div>
+                                <h4 class="font-semibold text-indigo-800">Bibliothèque Commune</h4>
+                                <p class="text-sm text-indigo-600">SharePoint structuré + kit numérique unifié</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                            <span class="text-xl">🔧</span>
+                            <div>
+                                <h4 class="font-semibold text-blue-800">Fiches Outils Synthétiques</h4>
+                                <p class="text-sm text-blue-600">Quoi / Pour qui / Comment utiliser</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+                            <span class="text-xl">🎯</span>
+                            <div>
+                                <h4 class="font-semibold text-purple-800">Matrice d'Intégration</h4>
+                                <p class="text-sm text-purple-600">Outils → moments du parcours jeune</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-green-600 mb-4">4️⃣ Process d'Ancrage</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                            <span class="text-xl">📊</span>
+                            <div>
+                                <h4 class="font-semibold text-green-800">Capitalisation Trimestrielle</h4>
+                                <p class="text-sm text-green-600">Restitutions internes 15 min par outil</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-teal-50 rounded-lg">
+                            <span class="text-xl">🤝</span>
+                            <div>
+                                <h4 class="font-semibold text-teal-800">Transfert de Compétences</h4>
+                                <p class="text-sm text-teal-600">1-2 conseillers pilotes → ambassadeurs</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-emerald-50 rounded-lg">
+                            <span class="text-xl">🎓</span>
+                            <div>
+                                <h4 class="font-semibold text-emerald-800">Mini-Formations Intégrées</h4>
+                                <p class="text-sm text-emerald-600">Ateliers pratiques au quotidien</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication et sécurisation -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-orange-600 mb-4">5️⃣ Communication & Posture</h3>
+                    <div class="space-y-4">
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">🎯 Rôle de Passeur</h4>
+                            <p class="text-sm text-orange-700">Je transforme la complexité des projets européens en outils simples et duplicables</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-yellow-800 mb-2">🛠️ Professionnalisation Interne</h4>
+                            <p class="text-sm text-yellow-700">Donner aux conseillers les moyens de s'outiller sans surcharge</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-red-600 mb-4">6️⃣ Sécuriser la Transition</h3>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-red-800 mb-2">📋 Fiche de Poste Cible</h4>
+                            <p class="text-sm text-red-700">Responsable Innovation & Outillage avec missions définies</p>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-pink-800 mb-2">🔄 Plan de Passation</h4>
+                            <p class="text-sm text-pink-700">Identifier les relais par projet pour libérer du temps stratégique</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bénéfices pour la direction -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white">
+                <h3 class="text-2xl font-bold mb-6 text-center">✅ Argumentaire Direction : Bénéfices de la Transition</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">🔄</span>
+                            Pérennité
+                        </h4>
+                        <p class="text-sm opacity-90">Projets survivent aux financements européens</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">🌟</span>
+                            Valorisation
+                        </h4>
+                        <p class="text-sm opacity-90">Réseau ML, Eurorégion, Erasmus+</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-2xl mr-2">⚡</span>
+                            Impact Interne
+                        </h4>
+                        <p class="text-sm opacity-90">Professionnalisation + efficacité accompagnement</p>
+                    </div>
+                </div>
+            </div></div>
+
+        <!-- Slide 8: Feuille de Route -->
+        <div id="slide-7" class="slide">
+            <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 mb-8">
+                <h2 class="text-4xl font-bold text-white text-center">🗺️ Feuille de Route & Plan d'Action</h2>
+                <p class="text-center text-green-100 mt-2">Mise en œuvre opérationnelle</p>
+            </div>
+
+            <!-- Livrables Transversaux -->
+            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
+                <h3 class="text-2xl font-bold text-green-600 mb-6">📦 Livrables Transversaux</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
+                        <h4 class="font-bold text-blue-800 mb-2">📚 Bibliothèque Commune</h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• SharePoint structuré</li>
+                            <li>• Kit numérique unifié</li>
+                            <li>• Ressources centralisées</li>
+                        </ul>
+                    </div>
+                    <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
+                        <h4 class="font-bold text-green-800 mb-2">🔧 Fiches Outils</h4>
+                        <ul class="text-sm text-green-700 space-y-1">
+                            <li>• Quoi / Pour qui / Comment</li>
+                            <li>• Mode d'emploi simple</li>
+                            <li>• Retours d'expérience</li>
+                        </ul>
+                    </div>
+                    <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
+                        <h4 class="font-bold text-purple-800 mb-2">🎯 Matrice d'Intégration</h4>
+                        <ul class="text-sm text-purple-700 space-y-1">
+                            <li>• Diagnostic → Outils</li>
+                            <li>• Orientation → Méthodes</li>
+                            <li>• Valorisation → Process</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process d'Ancrage -->
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-orange-600 mb-4">⚙️ Process d'Ancrage</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
+                            <span class="text-xl">📊</span>
+                            <div>
+                                <h4 class="font-semibold text-orange-800">Capitalisation Trimestrielle</h4>
+                                <p class="text-sm text-orange-600">Restitutions internes 15 min par outil/méthode</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
+                            <span class="text-xl">🤝</span>
+                            <div>
+                                <h4 class="font-semibold text-blue-800">Transfert de Compétences</h4>
+                                <p class="text-sm text-blue-600">1-2 conseillers pilotes par projet → ambassadeurs</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
+                            <span class="text-xl">🎓</span>
+                            <div>
+                                <h4 class="font-semibold text-green-800">Mini-Formations</h4>
+                                <p class="text-sm text-green-600">Ateliers pratiques intégrés au quotidien</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
+                    <h3 class="text-xl font-bold text-purple-600 mb-4">💬 Communication Repositionnée</h3>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                            <h4 class="font-semibold text-red-800 mb-2">❌ Discours Ancien</h4>
+                            <p class="text-sm text-red-700">"Je pilote 5 projets innovants"</p>
+                        </div>
+                        <div class="text-center py-2">
+                            <span class="text-2xl">↓</span>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h4 class="font-semibold text-green-800 mb-2">✅ Nouveau Positionnement</h4>
+                            <p class="text-sm text-green-700">"Je structure le service d'outillage qui capitalise et diffuse ces innovations dans l'accompagnement de droit commun"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sécurisation Transition -->
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">🔒 Sécurisation de la Transition</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2">📋 Fiche de Poste Cible</h4>
+                        <p class="text-sm opacity-90">Responsable Innovation & Outillage avec missions, périmètre, livrables définis</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2">🔄 Plan de Passation</h4>
+                        <p class="text-sm opacity-90">Identifier les relais par projet pour libérer du temps stratégique</p>
+                    </div>
+                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
+                        <h4 class="font-bold mb-2">📈 Argumentaire Direction</h4>
+                        <p class="text-sm opacity-90">Pérennité, valorisation externe, impact interne</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bénéfices -->
+            <div class="bg-white rounded-xl p-6 shadow-lg">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">✅ Bénéfices de la Transformation</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white text-xl">🔄</span>
+                        </div>
+                        <h4 class="font-bold text-blue-800 text-sm">Pérennité Projets</h4>
+                        <p class="text-xs text-blue-600 mt-1">Après financements</p>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white text-xl">🌟</span>
+                        </div>
+                        <h4 class="font-bold text-green-800 text-sm">Valorisation Externe</h4>
+                        <p class="text-xs text-green-600 mt-1">Réseau ML, Eurorégion</p>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white text-xl">🎓</span>
+                        </div>
+                        <h4 class="font-bold text-purple-800 text-sm">Professionnalisation</h4>
+                        <p class="text-xs text-purple-600 mt-1">Conseillers outillés</p>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-lg">
+                        <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span class="text-white text-xl">⚡</span>
+                        </div>
+                        <h4 class="font-bold text-orange-800 text-sm">Efficacité</h4>
+                        <p class="text-xs text-orange-600 mt-1">Accompagnement optimisé</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 8;
+
+        function showSlide(index) {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Show target slide
+            document.getElementById(`slide-${index}`).classList.add('active');
+            
+            // Update navigation dots
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+            
+            // Update progress bar
+            const progress = ((index + 1) / totalSlides) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            const next = (currentSlide + 1) % totalSlides;
+            showSlide(next);
+        }
+
+        function prevSlide() {
+            const prev = (currentSlide - 1 + totalSlides) % totalSlides;
+            showSlide(prev);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
             }
         });
-    });
 
-    function navigate(direction) {
-        const newStep = currentStep + direction;
-        if (newStep > 0 && newStep <= totalSteps) {
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            currentStep = newStep;
-            document.getElementById(`step-${currentStep}`).classList.add('active');
-            updateNavButtons();
-        }
-        if (currentStep === totalSteps) {
-            generateIkigai();
-        }
-    }
+        // Auto-advance (optional - uncomment to enable)
+        // setInterval(nextSlide, 10000);
 
-    function updateNavButtons() {
-        const prevBtn = document.getElementById('prev-btn');
-        const nextBtn = document.getElementById('next-btn');
-        
-        prevBtn.style.visibility = currentStep > 1 ? 'visible' : 'hidden';
-        
-        if (currentStep === totalSteps) {
-            nextBtn.style.visibility = 'hidden';
-        } else if (currentStep === totalSteps - 1) {
-            nextBtn.textContent = 'Voir mon Ikigai !';
-            nextBtn.style.visibility = 'visible';
-        } else {
-            nextBtn.textContent = 'Suivant';
-            nextBtn.style.visibility = 'visible';
-        }
-    }
-
-    function addItem(type) {
-        const input = document.getElementById(`input-${type}`);
-        const value = input.value.trim();
-        if (value && !data[type].includes(value)) {
-            data[type].push(value);
-            renderList(type);
-            input.value = '';
-            input.focus();
-        }
-    }
-
-    function removeItem(type, index) {
-        data[type].splice(index, 1);
-        renderList(type);
-    }
-
-    function renderList(type) {
-        const listContainer = document.getElementById(`list-${type}`);
-        listContainer.innerHTML = '';
-        const colors = {
-            aime: 'bg-turquoise-200 text-turquoise-800',
-            fort: 'bg-yellow-200 text-yellow-800',
-            paye: 'bg-red-200 text-red-800',
-            monde: 'bg-green-200 text-green-800'
-        };
-        data[type].forEach((item, index) => {
-            const tag = document.createElement('div');
-            tag.className = `tag ${colors[type]} px-3 py-1 rounded-full flex items-center gap-2`;
-            tag.innerHTML = `
-                <span>${item}</span>
-                <span class="tag-remove font-bold cursor-pointer transition-transform" onclick="removeItem('${type}', ${index})">&times;</span>
-            `;
-            listContainer.appendChild(tag);
-        });
-    }
-
-    function generateIkigai() {
-        const titles = {
-            aime: "❤️‍🩹 Ce que j'aime",
-            fort: "💪 Ce qui me rend fort",
-            paye: "💰 Ce pour quoi je peux être payé",
-            monde: "🌍 Ce dont le monde a besoin"
-        };
-
-        Object.keys(data).forEach(type => {
-            const container = document.getElementById(`result-${type}`);
-            let content = `<h4>${titles[type]}</h4><ul>`;
-            data[type].forEach(item => {
-                content += `<li>${item}</li>`;
-            });
-            content += '</ul>';
-            container.innerHTML = content;
-        });
-    }
-    
-    document.getElementById('download-btn').addEventListener('click', function() {
-        const captureElement = document.getElementById('ikigai-capture');
-        html2canvas(captureElement, {
-            backgroundColor: '#ffffff',
-            scale: 2
-        }).then(canvas => {
-            const image = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            link.href = image;
-            link.download = 'mon-ikigai.png';
-            link.click();
-        });
-    });
-
-</script>
-</body>
+        // Initialize
+        showSlide(0);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a2e4ce69cd5b4',t:'MTc1NjI4MzE1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
 
