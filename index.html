@@ -3,1124 +3,675 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIO - Responsable Innovation & Outillage MLPB</title>
+    <title>Écosystème de la Mission Locale Pays Basque</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
         }
-        
-        .slide {
+        .ecosystem-container {
+            position: relative;
+            width: 1000px;
+            height: 1000px;
+            margin: auto;
+        }
+        .service-bubble {
+            position: absolute;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .service-bubble:hover {
+            transform: scale(1.05) !important;
+            z-index: 50;
+        }
+        .details-panel {
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            max-height: 0;
             opacity: 0;
-            transform: translateX(100px);
-            transition: all 0.6s ease-in-out;
+            overflow: hidden;
         }
-        
-        .slide.active {
+        .details-panel.open {
+            max-height: 500px; /* Adjust as needed */
             opacity: 1;
-            transform: translateX(0);
         }
-        
-        .nav-dot {
-            transition: all 0.3s ease;
+        .accordion-content {
+            transition: max-height 0.3s ease-out;
+            overflow: hidden;
         }
-        
-        .nav-dot.active {
-            background: #3B82F6;
-            transform: scale(1.2);
+        /* MLPB Palette */
+        :root {
+            --mlpb-orange: #f39200;
+            --mlpb-green: #95c11f;
+            --mlpb-blue: #2897d5;
+            --mlpb-pink: #d60b52;
+            --mlpb-purple: #a3195b;
+            --mlpb-brown: #9f3d3f;
+            --mlpb-dark: #171718;
         }
-        
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
-        .progress-bar {
-            transition: width 0.8s ease-in-out;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.8s ease-in-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        .basque-pattern {
-            background-image: 
-                radial-gradient(circle at 25% 25%, #ff6b6b 0%, transparent 50%),
-                radial-gradient(circle at 75% 75%, #4ecdc4 0%, transparent 50%);
+
+        /* Custom colors for bubbles */
+        .bubble-formation { background-color: #f0fff4; border-color: var(--mlpb-green); color: #2f6c46; }
+        .bubble-emploi { background-color: #ebf8ff; border-color: var(--mlpb-blue); color: #2c5282; }
+        .bubble-alternance { background-color: #fff5f7; border-color: var(--mlpb-pink); color: #9d2355; }
+        .bubble-vulnerables { background-color: #fffbeb; border-color: var(--mlpb-orange); color: #92400e; }
+        .bubble-mobilites { background-color: #e0f2fe; border-color: var(--mlpb-blue); color: #075985; }
+        .bubble-international { background-color: #f5f3ff; border-color: var(--mlpb-purple); color: #5b21b6; }
+        .bubble-quotidien { background-color: #fffaf0; border-color: var(--mlpb-brown); color: #854d0e; }
+        .bubble-sante { background-color: #fef2f2; border-color: var(--mlpb-pink); color: #b91c1c; }
+        .bubble-citoyennete { background-color: #fafafa; border-color: var(--mlpb-dark); color: #374151; }
+
+        @media (max-width: 1024px) {
+            .ecosystem-container {
+                display: none;
+            }
+            .mobile-view {
+                display: block !important;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
-    <!-- Header -->
-    <header class="gradient-bg text-white py-6 shadow-lg">
-        <div class="container mx-auto px-6">
-            <h1 class="text-3xl font-bold text-center">RIO - Responsable Innovation & Outillage</h1>
-            <p class="text-center text-blue-100 mt-2">Mission Locale Pays Basque • Fiche de Poste & Plan d'Action</p>
-        </div>
+<body class="text-gray-800 p-4 md:p-8">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold" style="color: var(--mlpb-purple);">Écosystème de la Mission Locale Pays Basque</h1>
+        <p class="text-lg mt-2" style="color: var(--mlpb-dark);">Une organisation vivante, collaborative et connectée au service des jeunes.</p>
     </header>
 
-    <!-- Navigation -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4">
-            <div class="flex justify-center space-x-4">
-                <div class="flex space-x-2">
-                    <button onclick="showSlide(0)" class="nav-dot w-3 h-3 rounded-full bg-gray-300 active" data-slide="0"></button>
-                    <button onclick="showSlide(1)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="1"></button>
-                    <button onclick="showSlide(2)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="2"></button>
-                    <button onclick="showSlide(3)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="3"></button>
-                    <button onclick="showSlide(4)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="4"></button>
-                    <button onclick="showSlide(5)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="5"></button>
-                    <button onclick="showSlide(6)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="6"></button>
-                    <button onclick="showSlide(7)" class="nav-dot w-3 h-3 rounded-full bg-gray-300" data-slide="7"></button>
+    <main class="flex flex-col lg:flex-row gap-8">
+        <!-- Main Ecosystem (Desktop) -->
+        <div class="ecosystem-container flex-grow">
+            <!-- Core -->
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center">
+                <div class="w-64 h-64 rounded-full flex flex-col items-center justify-center text-white shadow-2xl p-4" style="background-color: var(--mlpb-purple);">
+                    <h2 class="font-bold text-xl">Mission Locale</h2>
+                    <p class="text-sm mt-2">Animation territoriale, Accueil, Conseil, Accompagnement de proximité</p>
                 </div>
             </div>
-            <div class="flex justify-center mt-4 space-x-4">
-                <button onclick="prevSlide()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">← Précédent</button>
-                <button onclick="nextSlide()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">Suivant →</button>
-            </div>
+            <!-- Circle 1: Main Teams -->
+            <div id="circle1" class="absolute top-1/2 left-1/2 w-[500px] h-[500px] -translate-x-1/2 -translate-y-1/2 z-10"></div>
+            <!-- Circle 2: Transversal Actors -->
+            <div id="circle2" class="absolute top-1/2 left-1/2 w-[720px] h-[720px] -translate-x-1/2 -translate-y-1/2 z-30"></div>
+            <!-- Circle 3: Service Bubbles -->
+            <div id="circle3" class="absolute top-1/2 left-1/2 w-[980px] h-[980px] -translate-x-1/2 -translate-y-1/2 z-20"></div>
         </div>
-    </nav>
 
-    <!-- Progress Bar -->
-    <div class="bg-gray-200 h-1">
-        <div id="progressBar" class="progress-bar bg-blue-500 h-1" style="width: 14.3%"></div>
-    </div>
+        <!-- Governance & Details Panel -->
+        <aside class="w-full lg:w-1/3 lg:max-w-md">
+            <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-8">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-purple);">Pilotage & Appui</h3>
+                <ul class="space-y-3 text-gray-700">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" style="color: var(--mlpb-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        <span>**Pilotage institutionnel & financier, RH, labellisation.**</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 mr-3 mt-1 flex-shrink-0" style="color: var(--mlpb-purple);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m12 0a2 2 0 100-4m0 4a2 2 0 110-4M6 12a2 2 0 100-4m0 4a2 2 0 110-4"></path></svg>
+                        <span>**Appui au pilotage :** Communication, SI, Logistique.</span>
+                    </li>
+                </ul>
+            </div>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
-        <!-- Slide 1: Mission RIO -->
-        <div id="slide-0" class="slide active">
-            <div class="basque-pattern rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white mb-6 text-center">🎯 Mission du RIO</h2>
-                <p class="text-center text-white text-lg opacity-90">Responsable Innovation & Outillage</p>
+            <!-- RIO Role -->
+            <div class="mt-6 bg-white p-6 rounded-xl border-2 shadow-lg" style="border-color: var(--mlpb-blue);">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-blue);">Responsable Innovation, Professionnalisation et Outillage : Rôle Stratégique</h3>
+                <div id="rio-accordion-container" class="space-y-2">
+                    <!-- RIO accordion items will be injected by JS -->
+                </div>
+            </div>
+
+            <!-- Ambassadeurs Role -->
+            <div class="mt-6 bg-white p-6 rounded-xl border-2 shadow-lg" style="border-color: var(--mlpb-green);">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-green);">Ambassadeurs – Passeurs stratégiques</h3>
+                <div id="ambassadeurs-accordion-container" class="space-y-2">
+                    <!-- Ambassadeurs accordion items will be injected by JS -->
+                </div>
             </div>
             
-            <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-8 text-white mb-8">
-                <h3 class="text-2xl font-bold mb-6 text-center">🚀 Mission Principale</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">🔧</span>
-                            Transformer
-                        </h4>
-                        <p class="text-sm opacity-90">Les projets en outils standard (fiches, grilles, checklists, capsules, parcours e-learning)</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">⚡</span>
-                            Assurer
-                        </h4>
-                        <p class="text-sm opacity-90">La qualité et cohérence des méthodes d'accompagnement avec amélioration continue</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">🎓</span>
-                            Professionnaliser
-                        </h4>
-                        <p class="text-sm opacity-90">Les conseillers et outiller les ambassadeurs pour irriguer les antennes</p>
-                    </div>
+            <!-- Conclusion Section -->
+            <div class="mt-6 bg-white p-6 rounded-xl border-2 shadow-lg" style="border-color: var(--mlpb-dark);">
+                <h3 class="text-xl font-bold text-gray-700 mb-4">Synthèse des Processus et Outils à Construire</h3>
+                <div id="conclusion-accordion-container" class="space-y-2">
+                    <!-- Conclusion accordion items will be injected by JS -->
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">🧱 Projets à Transformer</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3 p-2 bg-blue-50 rounded-lg">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                            <span class="font-medium">ROAMING</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-green-50 rounded-lg">
-                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <span class="font-medium">LS4YOU</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-purple-50 rounded-lg">
-                            <div class="w-3 h-3 bg-purple-500 rounded-full"></div>
-                            <span class="font-medium">Baserriberri</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-orange-50 rounded-lg">
-                            <div class="w-3 h-3 bg-orange-500 rounded-full"></div>
-                            <span class="font-medium">Lanean</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-pink-50 rounded-lg">
-                            <div class="w-3 h-3 bg-pink-500 rounded-full"></div>
-                            <span class="font-medium">Take Off Pro</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">📊 Livrables Standards</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            <span class="text-xl">📋</span>
-                            <span>Fiches réflexes</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            <span class="text-xl">📊</span>
-                            <span>Grilles d'évaluation</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            <span class="text-xl">✅</span>
-                            <span>Checklists process</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            <span class="text-xl">🎥</span>
-                            <span>Capsules vidéo</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg">
-                            <span class="text-xl">📚</span>
-                            <span>Parcours e-learning</span>
-                        </div>
-                    </div>
+            <!-- Interactions Section -->
+            <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-purple);">Interactions & Relations de Travail</h3>
+                <div id="interactions-accordion-container" class="space-y-2">
+                    <!-- Interactions accordion items will be injected by JS -->
                 </div>
             </div>
+
+            <!-- Process Section -->
+            <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-purple);">Les Processus Clés de l'Écosystème</h3>
+                <div id="process-accordion-container" class="space-y-2">
+                    <!-- Process accordion items will be injected by JS -->
+                </div>
+            </div>
+
+            <!-- Organisation Générale -->
+            <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 class="text-xl font-bold mb-4" style="color: var(--mlpb-purple);">Organisation Générale de la MLPB</h3>
+                <div id="accordion-container" class="space-y-2">
+                    <!-- Accordion items will be injected by JS -->
+                </div>
+            </div>
+
+            <div id="details-container" class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <p class="text-gray-500 text-center">Cliquez sur une bulle de service pour voir les détails.</p>
+            </div>
+        </aside>
+        
+        <!-- Mobile View -->
+        <div class="mobile-view hidden w-full space-y-4">
+            <!-- Bubbles as a list for mobile -->
         </div>
 
-        <!-- Slide 2: Relations Clés -->
-        <div id="slide-1" class="slide">
-            <div class="bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">🤝 Relations Clés du RIO</h2>
-                <p class="text-center text-green-100 mt-2">Qui fait quoi avec toi</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-red-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🎯</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-red-800">Direction (Pilotage)</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-red-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-red-800 text-sm mb-2">Tu proposes, arbitres, reportes</h4>
-                            <div class="text-xs text-red-700">
-                                <p><strong>Tu attends :</strong> arbitrages, priorités, ressources, validation standards</p>
-                                <p><strong>Tu fournis :</strong> tableaux de bord, notes stratégiques, plan diffusion, reporting financeurs</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-blue-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🏆</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-blue-800">Ambassadeurs Territoriaux</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 text-sm mb-2">Tes "champions" d'adoption</h4>
-                            <div class="text-xs text-blue-700">
-                                <p><strong>Tu les formes :</strong> Training of Trainers, kits 15-30 min</p>
-                                <p><strong>Ils animent :</strong> mini-sessions locales, tests, remontées besoins</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-green-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">👥</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-green-800">Conseillers CEJ/PACEA</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-green-800 text-sm mb-2">Utilisateurs finaux</h4>
-                            <div class="text-xs text-green-700">
-                                <p><strong>Tu fournis :</strong> fiches réflexes, micro-guides, capsules</p>
-                                <p><strong>Tu organises :</strong> office hours, Help-desk Teams</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-purple-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🛠️</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-purple-800">Appui (Com/SI/Logistique)</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 text-sm mb-2">Industrialiser l'outillage</h4>
-                            <div class="text-xs text-purple-700">
-                                <p><strong>Com' :</strong> calendrier éditorial, packs diffusion</p>
-                                <p><strong>Logistique :</strong> planification ateliers, replays</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-orange-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">📚</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-orange-800">Volontaires SC & Stagiaires</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-orange-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-orange-800 text-sm mb-2">Mémoire vivante</h4>
-                            <div class="text-xs text-orange-700">
-                                <p>Capitalisation, témoignages, montage capsules, maquettes supports</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-pink-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🌟</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-pink-800">Jeunes Pairs Ambassadeurs</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="bg-pink-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-pink-800 text-sm mb-2">Preuve sociale</h4>
-                            <div class="text-xs text-pink-700">
-                                <p>Participation ateliers/webinaires, capsules témoignages, présence instances</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 3: Tâches Concrètes -->
-        <div id="slide-2" class="slide">
-            <div class="bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">⚙️ Tâches Concrètes du RIO</h2>
-                <p class="text-center text-orange-100 mt-2">Cadence et livrables opérationnels</p>
-            </div>
-
-            <!-- Conception & Standardisation -->
-            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                <h3 class="text-2xl font-bold text-orange-600 mb-6">🔧 Conception & Standardisation</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
-                            <h4 class="font-bold text-blue-800 mb-2">Fiches Réflexes</h4>
-                            <p class="text-sm text-blue-700">1 page A4 • Situation → Action → Ressources</p>
-                            <p class="text-xs text-blue-600 mt-1">Cadence : 2 fiches/mois par projet</p>
-                        </div>
-                        <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
-                            <h4 class="font-bold text-green-800 mb-2">Grilles d'Évaluation</h4>
-                            <p class="text-sm text-green-700">Critères objectifs • Échelles • Seuils</p>
-                            <p class="text-xs text-green-600 mt-1">Cadence : 1 grille/trimestre</p>
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
-                            <h4 class="font-bold text-purple-800 mb-2">Capsules Vidéo</h4>
-                            <p class="text-sm text-purple-700">3-5 min • Témoignages • Tutos</p>
-                            <p class="text-xs text-purple-600 mt-1">Cadence : 1 capsule/mois</p>
-                        </div>
-                        <div class="border-l-4 border-pink-500 pl-4 bg-pink-50 p-4 rounded-r-lg">
-                            <h4 class="font-bold text-pink-800 mb-2">Parcours E-learning</h4>
-                            <p class="text-sm text-pink-700">Modules interactifs • Quiz • Badges</p>
-                            <p class="text-xs text-pink-600 mt-1">Cadence : 1 parcours/semestre</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Professionnalisation -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-green-600 mb-4">🎓 Professionnalisation</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                            <span class="text-xl">⏱️</span>
-                            <div>
-                                <h4 class="font-semibold text-green-800">Micro-formations</h4>
-                                <p class="text-sm text-green-600">45-60 min • Format hybride</p>
-                                <p class="text-xs text-green-500">Cadence : 1/mois</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                            <span class="text-xl">🏆</span>
-                            <div>
-                                <h4 class="font-semibold text-blue-800">Kits Ambassadeurs</h4>
-                                <p class="text-sm text-blue-600">15-30 min • Prêts à l'emploi</p>
-                                <p class="text-xs text-blue-500">Cadence : 1 kit/trimestre</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
-                            <span class="text-xl">🆘</span>
-                            <div>
-                                <h4 class="font-semibold text-purple-800">Office Hours</h4>
-                                <p class="text-sm text-purple-600">Permanences d'appui rapide</p>
-                                <p class="text-xs text-purple-500">Cadence : Bimensuel</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-indigo-600 mb-4">📢 Diffusion</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg">
-                            <span class="text-xl">📅</span>
-                            <div>
-                                <h4 class="font-semibold text-indigo-800">Calendrier Trimestriel</h4>
-                                <p class="text-sm text-indigo-600">Mini-sessions par antenne</p>
-                                <p class="text-xs text-indigo-500">Planning anticipé</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-teal-50 rounded-lg">
-                            <span class="text-xl">📱</span>
-                            <div>
-                                <h4 class="font-semibold text-teal-800">Campagne Com' Interne</h4>
-                                <p class="text-sm text-teal-600">Posts Teams + visuels</p>
-                                <p class="text-xs text-teal-500">Mensuel</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
-                            <span class="text-xl">🎬</span>
-                            <div>
-                                <h4 class="font-semibold text-orange-800">Replays Classés</h4>
-                                <p class="text-sm text-orange-600">Bibliothèque thématique</p>
-                                <p class="text-xs text-orange-500">Mise à jour continue</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Qualité & Gouvernance -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">📊 Qualité & Data</h3>
-                    <div class="space-y-4">
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-red-800 mb-2">Tableau de Bord Adoption</h4>
-                            <ul class="text-sm text-red-700 space-y-1">
-                                <li>• Taux d'usage par CEJ/PACEA</li>
-                                <li>• NPS conseillers</li>
-                                <li>• Temps moyen recherche outil</li>
-                                <li>• "Done = Used"</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-purple-600 mb-4">🎯 Gouvernance</h3>
-                    <div class="space-y-4">
-                        <div class="bg-purple-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 mb-2">Rituels de Pilotage</h4>
-                            <ul class="text-sm text-purple-700 space-y-1">
-                                <li>• Flash report mensuel</li>
-                                <li>• COPIL outillage bimestriel</li>
-                                <li>• Revue indicateurs trimestrielle</li>
-                                <li>• MEP des SOP (procédures)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 4: 4 Axes Stratégiques -->
-        <div id="slide-3" class="slide">
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">🎯 4 Axes Stratégiques du RIO</h2>
-                <p class="text-center text-indigo-100 mt-2">Raisonnement stratégique structurant</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-blue-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🔧</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-blue-800">AXE 1 - Outillage & Innovation</h3>
-                        <p class="text-sm text-blue-600 italic">design → outils opérationnels</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 text-sm">Objectif</h4>
-                            <p class="text-xs text-blue-700">Convertir les projets en standards simples, accessibles et duplicables</p>
-                        </div>
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 text-sm">Routines</h4>
-                            <p class="text-xs text-blue-700">Ateliers design thinking, prototypage rapide, tests utilisateurs</p>
-                        </div>
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 text-sm">Livrables</h4>
-                            <p class="text-xs text-blue-700">Fiches, grilles, checklists, capsules, parcours e-learning</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-green-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🎓</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-green-800">AXE 2 - Professionnalisation</h3>
-                        <p class="text-sm text-green-600 italic">former → diffuser → ancrer</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-green-800 text-sm">Objectif</h4>
-                            <p class="text-xs text-green-700">Monter en compétences sans alourdir la charge des équipes</p>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-green-800 text-sm">Routines</h4>
-                            <p class="text-xs text-green-700">Micro-formations (45 min), ToT ambassadeurs, office hours bimensuelles</p>
-                        </div>
-                        <div class="bg-green-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-green-800 text-sm">Livrables</h4>
-                            <p class="text-xs text-green-700">Slides + script + démo courte, quiz attestation, replays classés</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-purple-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">📊</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-purple-800">AXE 3 - Gouvernance & Qualité</h3>
-                        <p class="text-sm text-purple-600 italic">piloter → améliorer → sécuriser</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 text-sm">Objectif</h4>
-                            <p class="text-xs text-purple-700">Remplacer "projets empilés" par système lisible, mesurable, pérenne</p>
-                        </div>
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 text-sm">Routines</h4>
-                            <p class="text-xs text-purple-700">COPIL bimestriel, flash report mensuel, revue indicateurs trimestrielle</p>
-                        </div>
-                        <div class="bg-purple-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 text-sm">Livrables</h4>
-                            <p class="text-xs text-purple-700">Tableaux de bord, SOP (procédures courtes), standards qualité</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover border-t-4 border-orange-500">
-                    <div class="text-center mb-4">
-                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-2xl">🌍</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-orange-800">AXE 4 - Territoires & Partenariats</h3>
-                        <p class="text-sm text-orange-600 italic">irrigation locale → influence</p>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="bg-orange-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-orange-800 text-sm">Objectif</h4>
-                            <p class="text-xs text-orange-700">Faire remonter besoins terrain et peser sur l'écosystème</p>
-                        </div>
-                        <div class="bg-orange-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-orange-800 text-sm">Routines</h4>
-                            <p class="text-xs text-orange-700">Observatoire agile, rencontres trimestrielles partenaires clés</p>
-                        </div>
-                        <div class="bg-orange-50 p-3 rounded-lg">
-                            <h4 class="font-semibold text-orange-800 text-sm">Livrables</h4>
-                            <p class="text-xs text-orange-700">Carto freins/solutions, intégration jeunes pairs, influence réseau</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 5: Transmission & Intégration -->
-        <div id="slide-4" class="slide">
-            <div class="bg-gradient-to-r from-teal-500 to-green-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">📊 Transmission & Intégration</h2>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-teal-600 mb-4">📝 Traduire en Livrables</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center space-x-3 p-3 bg-teal-50 rounded-lg">
-                            <span class="text-xl">📋</span>
-                            <span>Fiches LS4YOU</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-                            <span class="text-xl">📊</span>
-                            <span>Grilles Roaming</span>
-                        </div>
-                        <div class="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                            <span class="text-xl">📖</span>
-                            <span>Carnet Baserriberri</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-green-600 mb-4">🎯 Diffuser via Ambassadeurs</h3>
-                    <div class="text-center">
-                        <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-3xl">⏱️</span>
-                        </div>
-                        <p class="text-lg font-semibold text-green-800">Mini-sessions</p>
-                        <p class="text-green-600">15-30 minutes</p>
-                        <div class="mt-4 p-3 bg-green-50 rounded-lg">
-                            <p class="text-sm text-green-700">Format court et impactant pour une adoption rapide</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl p-6 text-white">
-                    <h4 class="font-bold mb-3 flex items-center">
-                        <span class="text-2xl mr-2">🔗</span>
-                        Intégrer CEJ/PACEA
-                    </h4>
-                    <p class="text-sm opacity-90">Au moins 1 outil issu des projets par parcours</p>
-                </div>
-
-                <div class="bg-gradient-to-br from-orange-500 to-red-600 rounded-xl p-6 text-white">
-                    <h4 class="font-bold mb-3 flex items-center">
-                        <span class="text-2xl mr-2">🌟</span>
-                        Valoriser les Jeunes
-                    </h4>
-                    <ul class="text-sm space-y-1 opacity-90">
-                        <li>• Témoignages vidéos</li>
-                        <li>• Book Mobilité</li>
-                        <li>• Webinaires</li>
-                    </ul>
-                </div>
-
-                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 text-white">
-                    <h4 class="font-bold mb-3 flex items-center">
-                        <span class="text-2xl mr-2">📈</span>
-                        Évaluer en Continu
-                    </h4>
-                    <p class="text-sm opacity-90">Indicateurs trimestriels partagés</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slide 6: RIO -->
-        <div id="slide-5" class="slide">
-            <div class="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">🚀 Intégrateur d'Innovations & Architecte d'Outillage</h2>
-                <p class="text-center text-yellow-100 mt-2">Repositionnement stratégique du rôle</p>
-            </div>
-
-            <div class="bg-red-50 border-l-4 border-red-400 p-6 rounded-r-xl mb-8">
-                <div class="flex items-center mb-4">
-                    <span class="text-2xl mr-3">🔄</span>
-                    <h3 class="text-xl font-bold text-red-800">Changement de Posture</h3>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-red-100 p-4 rounded-lg">
-                        <h4 class="font-semibold text-red-800 mb-2">❌ Avant : "Je gère des projets"</h4>
-                        <p class="text-sm text-red-700">Pilotage de financements européens isolés</p>
-                    </div>
-                    <div class="bg-green-100 p-4 rounded-lg">
-                        <h4 class="font-semibold text-green-800 mb-2">✅ Maintenant : "J'expérimente des outils durables"</h4>
-                        <p class="text-sm text-green-700">Intégration d'innovations pour l'accompagnement de demain</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-2xl font-bold text-orange-600 mb-6">🎯 Missions Redéfinies</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-4 p-4 bg-blue-50 rounded-lg">
-                            <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">🔧</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-blue-800">Intégrer</h4>
-                                <p class="text-sm text-blue-600">Transformer chaque projet en brique du futur service outillage</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-4 p-4 bg-green-50 rounded-lg">
-                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">📚</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-green-800">Capitaliser</h4>
-                                <p class="text-sm text-green-600">Créer une bibliothèque d'outils transférables et duplicables</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-4 p-4 bg-purple-50 rounded-lg">
-                            <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">🎓</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-purple-800">Professionnaliser</h4>
-                                <p class="text-sm text-purple-600">Former les conseillers aux nouveaux outils sans surcharge</p>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-start space-x-4 p-4 bg-orange-50 rounded-lg">
-                            <div class="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">🏗️</span>
-                            </div>
-                            <div>
-                                <h4 class="font-semibold text-orange-800">Structurer</h4>
-                                <p class="text-sm text-orange-600">Architecturer le futur service innovation & outillage</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-2xl font-bold text-yellow-600 mb-6">🧱 Projets = Briques Contributives</h3>
-                    <div class="space-y-3">
-                        <div class="border-l-4 border-blue-500 pl-4 py-2 bg-blue-50 rounded-r-lg">
-                            <h4 class="font-semibold text-blue-800">Take Off Pro</h4>
-                            <p class="text-xs text-blue-600">→ Accélérateur mobilité internationale</p>
-                        </div>
-                        
-                        <div class="border-l-4 border-green-500 pl-4 py-2 bg-green-50 rounded-r-lg">
-                            <h4 class="font-semibold text-green-800">Baserriberri</h4>
-                            <p class="text-xs text-green-600">→ Modèle chantier-école transfrontalier</p>
-                        </div>
-                        
-                        <div class="border-l-4 border-purple-500 pl-4 py-2 bg-purple-50 rounded-r-lg">
-                            <h4 class="font-semibold text-purple-800">ROAMING</h4>
-                            <p class="text-xs text-purple-600">→ Colonne vertébrale digitale</p>
-                        </div>
-                        
-                        <div class="border-l-4 border-orange-500 pl-4 py-2 bg-orange-50 rounded-r-lg">
-                            <h4 class="font-semibold text-orange-800">Lanean</h4>
-                            <p class="text-xs text-orange-600">→ Service emploi transfrontalier</p>
-                        </div>
-
-                        <div class="border-l-4 border-pink-500 pl-4 py-2 bg-pink-50 rounded-r-lg">
-                            <h4 class="font-semibold text-pink-800">LS4YOU</h4>
-                            <p class="text-xs text-pink-600">→ Méthodologie Life Skills transversale</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white text-center">
-                <h3 class="text-2xl font-bold mb-4">🎯 Vision : Passeur d'Innovation</h3>
-                <p class="text-lg opacity-90">
-                    Je transforme la complexité des projets européens en outils simples, concrets et duplicables 
-                    qui préfigurent le futur service d'accompagnement de la MLPB.
-                </p>
-            </div>
-        </div>
-
-        <!-- Slide 7: Stratégie de Transition -->
-        <div id="slide-6" class="slide">
-            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">🔄 Stratégie de Transition</h2>
-                <p class="text-center text-emerald-100 mt-2">Vers le poste d'Architecte d'Innovation & Outillage</p>
-            </div>
-
-            <!-- Repositionnement immédiat -->
-            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                <h3 class="text-2xl font-bold text-emerald-600 mb-6">1️⃣ Repositionner le Rôle Dès Maintenant</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-red-50 p-6 rounded-lg border-l-4 border-red-400">
-                        <h4 class="font-bold text-red-800 mb-3">❌ Ancien Discours</h4>
-                        <div class="space-y-2 text-sm text-red-700">
-                            <p>"Je gère des projets européens"</p>
-                            <p>"Je pilote 5 financements"</p>
-                            <p>"Mes projets sont innovants"</p>
-                        </div>
-                    </div>
-                    <div class="bg-green-50 p-6 rounded-lg border-l-4 border-green-400">
-                        <h4 class="font-bold text-green-800 mb-3">✅ Nouveau Positionnement</h4>
-                        <div class="space-y-2 text-sm text-green-700">
-                            <p>"J'expérimente des outils durables"</p>
-                            <p>"Je structure le service d'outillage"</p>
-                            <p>"Je transforme l'innovation en outils transférables"</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-6 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                    <p class="text-emerald-800 font-medium text-center">
-                        🎯 <strong>Intégrateur d'innovations</strong> : je ne gère pas que des financements, je crée des outils transférables
-                    </p>
-                </div>
-            </div>
-
-            <!-- Projets comme briques -->
-            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                <h3 class="text-2xl font-bold text-teal-600 mb-6">2️⃣ Chaque Projet = Brique Contributive</h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                        <h4 class="font-bold text-blue-800 text-sm">Take Off Pro</h4>
-                        <p class="text-xs text-blue-600 mt-1">→ Accélérateur mobilité internationale</p>
-                        <p class="text-xs text-blue-500 mt-1">Outils duplicables pour conseillers</p>
-                    </div>
-                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
-                        <h4 class="font-bold text-green-800 text-sm">Baserriberri</h4>
-                        <p class="text-xs text-green-600 mt-1">→ Modèle chantier-école transfrontalier</p>
-                        <p class="text-xs text-green-500 mt-1">Outil pédagogique d'insertion</p>
-                    </div>
-                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
-                        <h4 class="font-bold text-purple-800 text-sm">ROAMING</h4>
-                        <p class="text-xs text-purple-600 mt-1">→ Plateforme digitale</p>
-                        <p class="text-xs text-purple-500 mt-1">Colonne vertébrale de l'outillage</p>
-                    </div>
-                    <div class="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
-                        <h4 class="font-bold text-orange-800 text-sm">Lanean</h4>
-                        <p class="text-xs text-orange-600 mt-1">→ Service emploi transfrontalier</p>
-                        <p class="text-xs text-orange-500 mt-1">Articulation institutionnelle</p>
-                    </div>
-                    <div class="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-500">
-                        <h4 class="font-bold text-pink-800 text-sm">LS4YOU</h4>
-                        <p class="text-xs text-pink-600 mt-1">→ Outils Life Skills</p>
-                        <p class="text-xs text-pink-500 mt-1">Méthodologie transversale</p>
-                    </div>
-                </div>
-                <div class="mt-6 p-4 bg-teal-50 rounded-lg">
-                    <p class="text-teal-800 font-medium text-center">
-                        🧱 Chaque projet nourrit le futur pôle outillage - Penser intégration plutôt que pilotage séparé
-                    </p>
-                </div>
-            </div>
-
-            <!-- Livrables transversaux -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-indigo-600 mb-4">3️⃣ Livrables Transversaux</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-indigo-50 rounded-lg">
-                            <span class="text-xl">📚</span>
-                            <div>
-                                <h4 class="font-semibold text-indigo-800">Bibliothèque Commune</h4>
-                                <p class="text-sm text-indigo-600">SharePoint structuré + kit numérique unifié</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                            <span class="text-xl">🔧</span>
-                            <div>
-                                <h4 class="font-semibold text-blue-800">Fiches Outils Synthétiques</h4>
-                                <p class="text-sm text-blue-600">Quoi / Pour qui / Comment utiliser</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
-                            <span class="text-xl">🎯</span>
-                            <div>
-                                <h4 class="font-semibold text-purple-800">Matrice d'Intégration</h4>
-                                <p class="text-sm text-purple-600">Outils → moments du parcours jeune</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-green-600 mb-4">4️⃣ Process d'Ancrage</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                            <span class="text-xl">📊</span>
-                            <div>
-                                <h4 class="font-semibold text-green-800">Capitalisation Trimestrielle</h4>
-                                <p class="text-sm text-green-600">Restitutions internes 15 min par outil</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-teal-50 rounded-lg">
-                            <span class="text-xl">🤝</span>
-                            <div>
-                                <h4 class="font-semibold text-teal-800">Transfert de Compétences</h4>
-                                <p class="text-sm text-teal-600">1-2 conseillers pilotes → ambassadeurs</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-emerald-50 rounded-lg">
-                            <span class="text-xl">🎓</span>
-                            <div>
-                                <h4 class="font-semibold text-emerald-800">Mini-Formations Intégrées</h4>
-                                <p class="text-sm text-emerald-600">Ateliers pratiques au quotidien</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Communication et sécurisation -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-orange-600 mb-4">5️⃣ Communication & Posture</h3>
-                    <div class="space-y-4">
-                        <div class="bg-orange-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-orange-800 mb-2">🎯 Rôle de Passeur</h4>
-                            <p class="text-sm text-orange-700">Je transforme la complexité des projets européens en outils simples et duplicables</p>
-                        </div>
-                        <div class="bg-yellow-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-yellow-800 mb-2">🛠️ Professionnalisation Interne</h4>
-                            <p class="text-sm text-yellow-700">Donner aux conseillers les moyens de s'outiller sans surcharge</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-red-600 mb-4">6️⃣ Sécuriser la Transition</h3>
-                    <div class="space-y-4">
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-red-800 mb-2">📋 Fiche de Poste Cible</h4>
-                            <p class="text-sm text-red-700">Responsable Innovation & Outillage avec missions définies</p>
-                        </div>
-                        <div class="bg-pink-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-pink-800 mb-2">🔄 Plan de Passation</h4>
-                            <p class="text-sm text-pink-700">Identifier les relais par projet pour libérer du temps stratégique</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bénéfices pour la direction -->
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white">
-                <h3 class="text-2xl font-bold mb-6 text-center">✅ Argumentaire Direction : Bénéfices de la Transition</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">🔄</span>
-                            Pérennité
-                        </h4>
-                        <p class="text-sm opacity-90">Projets survivent aux financements européens</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">🌟</span>
-                            Valorisation
-                        </h4>
-                        <p class="text-sm opacity-90">Réseau ML, Eurorégion, Erasmus+</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2 flex items-center">
-                            <span class="text-2xl mr-2">⚡</span>
-                            Impact Interne
-                        </h4>
-                        <p class="text-sm opacity-90">Professionnalisation + efficacité accompagnement</p>
-                    </div>
-                </div>
-            </div></div>
-
-        <!-- Slide 8: Feuille de Route -->
-        <div id="slide-7" class="slide">
-            <div class="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-8 mb-8">
-                <h2 class="text-4xl font-bold text-white text-center">🗺️ Feuille de Route & Plan d'Action</h2>
-                <p class="text-center text-green-100 mt-2">Mise en œuvre opérationnelle</p>
-            </div>
-
-            <!-- Livrables Transversaux -->
-            <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                <h3 class="text-2xl font-bold text-green-600 mb-6">📦 Livrables Transversaux</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="border-l-4 border-blue-500 pl-4 bg-blue-50 p-4 rounded-r-lg">
-                        <h4 class="font-bold text-blue-800 mb-2">📚 Bibliothèque Commune</h4>
-                        <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• SharePoint structuré</li>
-                            <li>• Kit numérique unifié</li>
-                            <li>• Ressources centralisées</li>
-                        </ul>
-                    </div>
-                    <div class="border-l-4 border-green-500 pl-4 bg-green-50 p-4 rounded-r-lg">
-                        <h4 class="font-bold text-green-800 mb-2">🔧 Fiches Outils</h4>
-                        <ul class="text-sm text-green-700 space-y-1">
-                            <li>• Quoi / Pour qui / Comment</li>
-                            <li>• Mode d'emploi simple</li>
-                            <li>• Retours d'expérience</li>
-                        </ul>
-                    </div>
-                    <div class="border-l-4 border-purple-500 pl-4 bg-purple-50 p-4 rounded-r-lg">
-                        <h4 class="font-bold text-purple-800 mb-2">🎯 Matrice d'Intégration</h4>
-                        <ul class="text-sm text-purple-700 space-y-1">
-                            <li>• Diagnostic → Outils</li>
-                            <li>• Orientation → Méthodes</li>
-                            <li>• Valorisation → Process</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Process d'Ancrage -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-orange-600 mb-4">⚙️ Process d'Ancrage</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3 p-3 bg-orange-50 rounded-lg">
-                            <span class="text-xl">📊</span>
-                            <div>
-                                <h4 class="font-semibold text-orange-800">Capitalisation Trimestrielle</h4>
-                                <p class="text-sm text-orange-600">Restitutions internes 15 min par outil/méthode</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
-                            <span class="text-xl">🤝</span>
-                            <div>
-                                <h4 class="font-semibold text-blue-800">Transfert de Compétences</h4>
-                                <p class="text-sm text-blue-600">1-2 conseillers pilotes par projet → ambassadeurs</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start space-x-3 p-3 bg-green-50 rounded-lg">
-                            <span class="text-xl">🎓</span>
-                            <div>
-                                <h4 class="font-semibold text-green-800">Mini-Formations</h4>
-                                <p class="text-sm text-green-600">Ateliers pratiques intégrés au quotidien</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl p-6 shadow-lg card-hover">
-                    <h3 class="text-xl font-bold text-purple-600 mb-4">💬 Communication Repositionnée</h3>
-                    <div class="space-y-4">
-                        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-                            <h4 class="font-semibold text-red-800 mb-2">❌ Discours Ancien</h4>
-                            <p class="text-sm text-red-700">"Je pilote 5 projets innovants"</p>
-                        </div>
-                        <div class="text-center py-2">
-                            <span class="text-2xl">↓</span>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                            <h4 class="font-semibold text-green-800 mb-2">✅ Nouveau Positionnement</h4>
-                            <p class="text-sm text-green-700">"Je structure le service d'outillage qui capitalise et diffuse ces innovations dans l'accompagnement de droit commun"</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sécurisation Transition -->
-            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl p-8 text-white mb-8">
-                <h3 class="text-2xl font-bold mb-6 text-center">🔒 Sécurisation de la Transition</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2">📋 Fiche de Poste Cible</h4>
-                        <p class="text-sm opacity-90">Responsable Innovation & Outillage avec missions, périmètre, livrables définis</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2">🔄 Plan de Passation</h4>
-                        <p class="text-sm opacity-90">Identifier les relais par projet pour libérer du temps stratégique</p>
-                    </div>
-                    <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                        <h4 class="font-bold mb-2">📈 Argumentaire Direction</h4>
-                        <p class="text-sm opacity-90">Pérennité, valorisation externe, impact interne</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bénéfices -->
-            <div class="bg-white rounded-xl p-6 shadow-lg">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">✅ Bénéfices de la Transformation</h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="text-center p-4 bg-blue-50 rounded-lg">
-                        <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-white text-xl">🔄</span>
-                        </div>
-                        <h4 class="font-bold text-blue-800 text-sm">Pérennité Projets</h4>
-                        <p class="text-xs text-blue-600 mt-1">Après financements</p>
-                    </div>
-                    <div class="text-center p-4 bg-green-50 rounded-lg">
-                        <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-white text-xl">🌟</span>
-                        </div>
-                        <h4 class="font-bold text-green-800 text-sm">Valorisation Externe</h4>
-                        <p class="text-xs text-green-600 mt-1">Réseau ML, Eurorégion</p>
-                    </div>
-                    <div class="text-center p-4 bg-purple-50 rounded-lg">
-                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-white text-xl">🎓</span>
-                        </div>
-                        <h4 class="font-bold text-purple-800 text-sm">Professionnalisation</h4>
-                        <p class="text-xs text-purple-600 mt-1">Conseillers outillés</p>
-                    </div>
-                    <div class="text-center p-4 bg-orange-50 rounded-lg">
-                        <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <span class="text-white text-xl">⚡</span>
-                        </div>
-                        <h4 class="font-bold text-orange-800 text-sm">Efficacité</h4>
-                        <p class="text-xs text-orange-600 mt-1">Accompagnement optimisé</p>
-                    </div>
-                </div>
-            </div>
-        </div>
     </main>
 
     <script>
-        let currentSlide = 0;
-        const totalSlides = 8;
+        document.addEventListener('DOMContentLoaded', function () {
+            const teams = [
+                { name: 'Conseillers Terrains' },
+                { name: 'Équipe CEJ' },
+                { name: 'Équipe Spécialisée' }
+            ];
 
-        function showSlide(index) {
-            // Hide all slides
-            document.querySelectorAll('.slide').forEach(slide => {
-                slide.classList.remove('active');
+            const connectors = [
+                { name: 'RIO', icon: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547a2 2 0 00-.547 1.806l.477 2.387a6 6 0 00.517 3.86l.158.318a6 6 0 003.86.517l2.387.477a2 2 0 001.806-.547a2 2 0 00.547-1.806l-.477-2.387a6 6 0 00-.517-3.86l-.158-.318a6 6 0 01-.517-3.86l.477-2.387a2 2 0 00.547-1.806z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>' },
+                { name: 'Ambassadeurs', icon: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>' },
+                { name: 'Jeunes Ambassadeurs', icon: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-2a6 6 0 00-12 0v2"></path></svg>' },
+                { name: 'Stagiaires & Volontaires', icon: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>' }
+            ];
+
+            const services = [
+                { id: 'formation', name: 'Formation & Orientation', colorClass: 'bubble-formation', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Ateliers d’orientation et de construction de projet.</li><li class="list-disc list-inside ml-2 mb-1">Accès aux formations préqualifiantes et qualifiantes.</li><li class="list-disc list-inside ml-2 mb-1">Prépa apprentissage.</li><li class="list-disc list-inside ml-2 mb-1">Formation linguistique (FLE).</li><li class="list-disc list-inside ml-2 mb-1">CléA / socle compétences de base.</li><li class="list-disc list-inside ml-2 mb-1">Modules numériques (PIX, illectronisme).</li><li class="list-disc list-inside ml-2 mb-1">Plateformes e-learning (MOOCs, LS4YOU).</li><li class="list-disc list-inside ml-2 mb-1">Ateliers “apprendre à apprendre”.</li></ul>' },
+                { id: 'emploi', name: 'Emploi & Entreprises', colorClass: 'bubble-emploi', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">CEJ – Contrat d’Engagement Jeune.</li><li class="list-disc list-inside ml-2 mb-1">PACEA.</li><li class="list-disc list-inside ml-2 mb-1">Ateliers emploi : CV, lettre de motivation, entretien.</li><li class="list-disc list-inside ml-2 mb-1">Immersions professionnelles (PMSMP, stages).</li><li class="list-disc list-inside ml-2 mb-1">Parrainage / mentorat avec entreprises.</li><li class="list-disc list-inside ml-2 mb-1">Plateformes emploi locales.</li><li class="list-disc list-inside ml-2 mb-1">Chantiers d’insertion et mises en relation IAE.</li></ul>' },
+                { id: 'alternance', name: 'Alternance', colorClass: 'bubble-alternance', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h.01M12 7h.01M16 7h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Accompagnement vers l’apprentissage.</li><li class="list-disc list-inside ml-2 mb-1">Prépa apprentissage (passerelle vers CFA).</li><li class="list-disc list-inside ml-2 mb-1">Appui aux contrats de professionnalisation.</li><li class="list-disc list-inside ml-2 mb-1">Relations directes avec CFA, entreprises et OPCO.</li></ul>' },
+                { id: 'vulnerables', name: 'Publics vulnérables', colorClass: 'bubble-vulnerables', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Jeunes en rupture : ASE, MNA, justice (PJJ, SPIP).</li><li class="list-disc list-inside ml-2 mb-1">Jeunes en situation de handicap (RQTH, Agefiph).</li><li class="list-disc list-inside ml-2 mb-1">Jeunes femmes vulnérables (#JerichoCampaign).</li><li class="list-disc list-inside ml-2 mb-1">Publics ruraux / isolés.</li></ul>' },
+                { id: 'mobilites', name: 'Mobilités', colorClass: 'bubble-mobilites', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Mobilité locale : Txik Txak, TAD, vélo.</li><li class="list-disc list-inside ml-2 mb-1">Aides financières permis de conduire.</li><li class="list-disc list-inside ml-2 mb-1">Flotte solidaire de véhicules partagés.</li><li class="list-disc list-inside ml-2 mb-1">Covoiturage accompagné.</li><li class="list-disc list-inside ml-2 mb-1">Préparation mobilité internationale.</li></ul>' },
+                { id: 'international', name: 'Transfrontalier & International', colorClass: 'bubble-international', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h1a2 2 0 002-2v-1a2 2 0 012-2h1.945M7.707 4.293l.707-.707a2 2 0 012.828 0l.707.707M15.293 7.707l.707.707a2 2 0 010 2.828l-.707.707M4.293 15.293l-.707.707a2 2 0 01-2.828 0l-.707-.707M19.707 8.293l.707-.707a2 2 0 000-2.828l-.707-.707"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Projet Baserriberri (formation charpente).</li><li class="list-disc list-inside ml-2 mb-1">Projet Lanean (emploi transfrontalier).</li><li class="list-disc list-inside ml-2 mb-1">Erasmus+ (stages, volontariat CES).</li><li class="list-disc list-inside ml-2 mb-1">Take Off Pro (mobilité pro).</li><li class="list-disc list-inside ml-2 mb-1">Life Skills for You – LS4YOU.</li><li class="list-disc list-inside ml-2 mb-1">ROAMING (professionnalisation conseillers).</li></ul>' },
+                { id: 'quotidien', name: 'Vie quotidienne & Logement', colorClass: 'bubble-quotidien', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Aides logement : CAF, Action Logement, FSL.</li><li class="list-disc list-inside ml-2 mb-1">Accès aux foyers de jeunes travailleurs.</li><li class="list-disc list-inside ml-2 mb-1">Appui recherche logement privé.</li><li class="list-disc list-inside ml-2 mb-1">Ateliers budget et gestion financière.</li><li class="list-disc list-inside ml-2 mb-1">Ouverture droits sociaux (RSA, AAH...).</li></ul>' },
+                { id: 'sante', name: 'Santé & Bien-être', colorClass: 'bubble-sante', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Permanences santé (médecins, CMP, CSAPA).</li><li class="list-disc list-inside ml-2 mb-1">Ateliers santé (nutrition, addictions...).</li><li class="list-disc list-inside ml-2 mb-1">Accès aux soins (CPAM, mutuelles).</li><li class="list-disc list-inside ml-2 mb-1">Prévention santé mentale.</li><li class="list-disc list-inside ml-2 mb-1">Santé Psy Jeunes.</li><li class="list-disc list-inside ml-2 mb-1">Programme Life Skills.</li></ul>' },
+                { id: 'citoyennete', name: 'Citoyenneté & Engagement', colorClass: 'bubble-citoyennete', icon: '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>', details: '<ul><li class="list-disc list-inside ml-2 mb-1">Service Civique (national et international).</li><li class="list-disc list-inside ml-2 mb-1">Ateliers citoyens (vie démocratique, égalité).</li><li class="list-disc list-inside ml-2 mb-1">Projets associatifs & collectifs.</li><li class="list-disc list-inside ml-2 mb-1">Ambassadeurs jeunes Mission Locale.</li><li class="list-disc list-inside ml-2 mb-1">Participation aux campagnes de prévention.</li></ul>' }
+            ];
+
+            const accordionData = [
+                { 
+                    title: '🚀 Cap : Nouvelle Organisation (projetée)', 
+                    content: `
+                        <h4 class="font-semibold text-gray-800 mb-2">Animation territoriale</h4>
+                        <ul class="list-disc list-inside ml-2 mb-3">
+                            <li>Accueil–Conseil–Proximité maintenus par territoires.</li>
+                            <li>Autres publics intégrés plus visiblement (ERIP, RSA, IJ).</li>
+                        </ul>
+                        <h4 class="font-semibold text-gray-800 mb-2">Insertion & accompagnement</h4>
+                        <ul class="list-disc list-inside ml-2 mb-3">
+                            <li>Nouveau bloc transversal : Insertion socio-professionnelle & Inclusion.</li>
+                            <li>Outils communs d’accompagnement (grilles, diagnostics, référentiels).</li>
+                            <li>Publics vulnérables intégrés dans toutes les politiques.</li>
+                        </ul>
+                        <h4 class="font-semibold text-gray-800 mb-2">Pilotage renforcé</h4>
+                        <ul class="list-disc list-inside ml-2 mb-3">
+                            <li>Institutionnel, financier, RH.</li>
+                            <li>Labellisation & amélioration continue (Service civique).</li>
+                            <li>Appui au pilotage : communication, SI, logistique.</li>
+                        </ul>
+                        <h4 class="font-semibold text-gray-800 mb-2">✅ Organisation en écosystème fluide</h4>
+                        <p class="ml-2">Décloisonnement, passerelles emploi–formation–social, cohérence accrue.</p>
+                    `
+                },
+                { title: '🏛️ Gouvernance & Organisation', content: '<ul><li class="list-disc list-inside ml-2">Conseil d’administration : élus, partenaires, associations.</li><li class="list-disc list-inside ml-2">Direction & coordination : pilotage stratégique et opérationnel.</li><li class="list-disc list-inside ml-2">Services internes : Accompagnement, Pôles thématiques, Fonctions support.</li></ul>' },
+                { title: '🌍 Territoire & Réseaux', content: '<ul><li class="list-disc list-inside ml-2">CAPB + communes limitrophes Landes.</li><li class="list-disc list-inside ml-2">9 antennes locales.</li><li class="list-disc list-inside ml-2">Travail en réseau avec acteurs locaux et européens (Erasmus+, POCTEFA).</li></ul>' },
+                { title: '👥 Publics Accompagnés', content: '<ul><li class="list-disc list-inside ml-2">Jeunes 16–25 ans (NEET, décrocheurs, etc.).</li><li class="list-disc list-inside ml-2">Profils diversifiés : sans diplôme, en recherche d’emploi, en projet de mobilité, publics vulnérables.</li></ul>' },
+                { title: '🎯 Développement des Compétences', content: '<ul><li class="list-disc list-inside ml-2">CEP 2.0 : orientation individualisée.</li><li class="list-disc list-inside ml-2">Life Skills (LS4YOU) : compétences psychosociales.</li><li class="list-disc list-inside ml-2">Programmes européens pour l’innovation.</li><li class="list-disc list-inside ml-2">Modules numériques : PIX, IA responsable.</li></ul>' },
+                { title: '🛠️ Activités Proposées', content: '<ul><li class="list-disc list-inside ml-2">Mobilité locale et internationale.</li><li class="list-disc list-inside ml-2">Engagement & citoyenneté (Service Civique).</li><li class="list-disc list-inside ml-2">Culture, sport & solidarité.</li><li class="list-disc list-inside ml-2">Accompagnement global (emploi, santé, logement...).</li><li class="list-disc list-inside ml-2">Innovation pédagogique.</li></ul>' },
+                { title: '🔗 Articulation des Services', content: '<ul><li class="list-disc list-inside ml-2">Accompagnement individuel (CEJ, PACEA).</li><li class="list-disc list-inside ml-2">Actions collectives (ateliers, projets).</li><li class="list-disc list-inside ml-2">Autonomisation (outils numériques).</li><li class="list-disc list-inside ml-2">Transmission & professionnalisation.</li></ul>' },
+                { title: '🚀 Projets Structurants 2024', content: '<ul><li class="list-disc list-inside ml-2">Baserriberri (POCTEFA)</li><li class="list-disc list-inside ml-2">ROAMING (FSE+)</li><li class="list-disc list-inside ml-2">Take Off Pro (Erasmus+)</li><li class="list-disc list-inside ml-2">Lanean (POCTEFA)</li><li class="list-disc list-inside ml-2">Campagne #Jericho</li><li class="list-disc list-inside ml-2">40 ans des Missions Locales</li></ul>' },
+                { title: '✅ Synthèse Clé', content: '<p>La MLPB est un <strong>hub territorial</strong> qui accompagne les 16–25 ans vers l’autonomie, fait le lien entre emploi, citoyenneté et mobilité, et expérimente des innovations pédagogiques.</p>' }
+            ];
+
+             const processAccordionData = [
+                { 
+                    title: '1. Processus de pilotage stratégique', 
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Assurer cohérence, alignement institutionnel et suivi global.</p>
+                        <div class="mt-2">
+                            <h5 class="font-semibold">Process “Orientation & arbitrage stratégique”</h5>
+                            <ul class="list-disc list-inside ml-4 text-sm mb-2">
+                                <li><strong>Leader :</strong> Direction</li>
+                                <li><strong>Associés :</strong> RIO, ambassadeurs référents</li>
+                                <li><strong>Objectif :</strong> Valider priorités, allouer ressources, arbitrer.</li>
+                                <li><strong>Livrables :</strong> Notes stratégiques, décisions formalisées.</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold">Process “Suivi stratégique des projets européens”</h5>
+                            <ul class="list-disc list-inside ml-4 text-sm">
+                                <li><strong>Leader :</strong> RIO</li>
+                                <li><strong>Associés :</strong> Direction</li>
+                                <li><strong>Objectif :</strong> Assurer la cohérence entre projets et feuille de route MLPB.</li>
+                                <li><strong>Livrables :</strong> Reporting financier, tableaux de bord consolidés.</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    title: '2. Processus de conception et outillage',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Transformer les projets en outils simples, duplicables et intégrés.</p>
+                        <ul class="list-disc list-inside ml-4 text-sm space-y-2">
+                            <li><strong>Design outil (Leader: RIO):</strong> Concevoir fiches, grilles, capsules.</li>
+                            <li><strong>Test & feedback (Leader: Ambassadeurs):</strong> Expérimenter en conditions réelles.</li>
+                            <li><strong>Validation & capitalisation (Leader: RIO):</strong> Valider pour diffusion et stocker sur SharePoint.</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '3. Processus de diffusion et appropriation',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Faire descendre les outils dans les pratiques et les rendre vivants.</p>
+                         <ul class="list-disc list-inside ml-4 text-sm space-y-2">
+                            <li><strong>Mini-sessions (Leader: Ambassadeurs):</strong> Diffusion pratique d'un outil en 15-30 min.</li>
+                            <li><strong>Intégration CEJ/PACEA (Leader: Conseillers):</strong> Utiliser systématiquement un outil projet par parcours.</li>
+                            <li><strong>Valorisation (Leader: Jeunes pairs):</strong> Faire témoigner les jeunes (ateliers, vidéos).</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '4. Processus de communication',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Passer d’une logique “cascade” à une logique “réseau”.</p>
+                        <ul class="list-disc list-inside ml-4 text-sm space-y-2">
+                            <li><strong>Com interne agile (Outils: Teams, SharePoint):</strong> Réactivité et mémoire collective.</li>
+                            <li><strong>Rituels collectifs:</strong> Réunion mensuelle de pôle, Ateliers-sprints.</li>
+                            <li><strong>Reporting Flash (Leader: Ambassadeurs):</strong> Partage mensuel (succès / vigilance / besoin).</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '5. Processus de prise de décision',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Assurer rapidité et pertinence par subsidiarité.</p>
+                        <ul class="list-disc list-inside ml-4 text-sm space-y-2">
+                            <li><strong>Stratégique (Direction):</strong> Budgets, partenariats, nouveaux projets.</li>
+                            <li><strong>Opérationnelle (RIO):</strong> Calendrier, priorités outils, process internes.</li>
+                            <li><strong>Terrain (Ambassadeurs):</strong> Adaptation d’un atelier, ajustement local.</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '6. Processus d\'évaluation et amélioration',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Mesurer, ajuster et renforcer l’impact dans le temps.</p>
+                         <ul class="list-disc list-inside ml-4 text-sm space-y-2">
+                            <li><strong>Indicateurs trimestriels (Leader: RIO):</strong> Mesurer adoption, satisfaction, impact.</li>
+                            <li><strong>Ajustements (Leader: RIO):</strong> Ajuster outils et procédures selon les retours.</li>
+                        </ul>
+                    `
+                }
+            ];
+
+            const rioAccordionData = [
+                {
+                    title: 'Missions Principales & Tâches',
+                    content: `
+                        <h5 class="font-semibold text-gray-800">4 Missions Clés</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm mb-3 space-y-1">
+                            <li><strong>Conception et capitalisation des outils</strong></li>
+                            <li><strong>Garant de la professionnalisation interne</strong></li>
+                            <li><strong>Intégration des projets européens dans le droit commun</strong></li>
+                            <li><strong>Pilotage transversal</strong> entre direction, projets et terrain</li>
+                        </ul>
+                        <h5 class="font-semibold text-gray-800">Tâches Principales</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                            <li>Design d’outils pédagogiques (fiches, grilles, capsules)</li>
+                            <li>Animation de sessions de professionnalisation</li>
+                            <li>Capitalisation et diffusion sur SharePoint</li>
+                            <li>Suivi et reporting des projets européens</li>
+                            <li>Organisation d’ateliers-sprints et de COPIL outillage</li>
+                            <li>Évaluation et ajustement des pratiques via indicateurs</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: 'Interactions',
+                    content: `
+                        <div class="space-y-3">
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec la Direction</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Transmission reporting stratégique et financier</li>
+                                    <li>Préparation des arbitrages et notes stratégiques</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec les Ambassadeurs</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Formation & appui (kits prêts à l’emploi)</li>
+                                    <li>Collecte des feedbacks terrain et co-construction</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec les Conseillers CEJ/PACEA</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Fourniture d’outils utilisables</li>
+                                    <li>Support et aide à l’appropriation</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec SC/Stagiaires et Jeunes pairs</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Appui à la capitalisation (SC/stagiaires)</li>
+                                    <li>Intégration de témoignages (Jeunes pairs)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `
+                }
+            ];
+            
+            const ambassadeursAccordionData = [
+                {
+                    title: 'Rôle Central & Tâches',
+                    content: `
+                        <h5 class="font-semibold text-gray-800">Rôle Central</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm mb-3 space-y-1">
+                            <li>Relais opérationnels entre projets et antennes</li>
+                            <li>Pivots de diffusion et appropriation des outils</li>
+                            <li>Passeurs de l’innovation vers les conseillers CEJ/PACEA</li>
+                            <li>Garants de la traduction locale des projets</li>
+                        </ul>
+                        <h5 class="font-semibold text-gray-800">Tâches Principales</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                            <li>Tester les outils (fiches, capsules, grilles)</li>
+                            <li>Organiser et animer des mini-sessions (15–30 min)</li>
+                            <li>Participer aux ateliers-sprints et réunions de pôle</li>
+                            <li>Produire un Flash Report mensuel (succès / vigilance / besoins)</li>
+                            <li>Assurer la restitution des pratiques en réunion territoriale</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: 'Interactions',
+                    content: `
+                        <div class="space-y-3">
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec le RIO</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Formation initiale et continue</li>
+                                    <li>Appui méthodologique et accès aux kits</li>
+                                    <li>Remontée de feedbacks terrain</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-semibold text-gray-800">Avec les Conseillers CEJ/PACEA</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Diffusion d’outils pour le parcours jeunes</li>
+                                    <li>Appui pratique pour l’intégration des outils</li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h5 class="font-semibold text-gray-800">Avec SC/Stagiaires et Jeunes pairs</h5>
+                                <ul class="list-disc list-inside ml-4 text-sm">
+                                    <li>Appui documentaire (SC/stagiaires)</li>
+                                    <li>Intégration de témoignages (Jeunes pairs)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `
+                }
+            ];
+
+            const interactionsAccordionData = [
+                { title: 'Direction ↔ RIO', content: '<p class="text-sm"><strong>Type :</strong> Reporting stratégique & arbitrages. <strong>Finalité :</strong> Garantir cohérence institutionnelle. <strong>Exemples :</strong> RIO envoie notes stratégiques, Direction valide arbitrages.</p>' },
+                { title: 'RIO ↔ Ambassadeurs', content: '<p class="text-sm"><strong>Type :</strong> Transmission descendante + feedback ascendant. <strong>Finalité :</strong> Traduire outils en pratiques et ajuster. <strong>Exemples :</strong> RIO fournit kits, Ambassadeurs remontent feedbacks.</p>' },
+                { title: 'Ambassadeurs ↔ Conseillers', content: '<p class="text-sm"><strong>Type :</strong> Diffusion & appropriation. <strong>Finalité :</strong> Intégrer les outils dans l’accompagnement. <strong>Exemples :</strong> Mini-sessions de 15–30 min, utilisation en parcours.</p>' },
+                { title: 'RIO ↔ Conseillers', content: '<p class="text-sm"><strong>Type :</strong> Support méthodologique & capitalisation. <strong>Finalité :</strong> Adapter les outils aux besoins réels. <strong>Exemples :</strong> Remontée de difficultés, co-design d\'outils.</p>' },
+                { title: 'Ambassadeurs ↔ Direction', content: '<p class="text-sm"><strong>Type :</strong> Restitution synthétique via Flash Reports. <strong>Finalité :</strong> Faire remonter la réalité du terrain. <strong>Exemples :</strong> 3 points mensuels (succès, vigilance, besoins).</p>' },
+                { title: 'Ambassadeurs ↔ SC/Stagiaires', content: '<p class="text-sm"><strong>Type :</strong> Appui logistique et documentaire. <strong>Finalité :</strong> Déléguer la capitalisation. <strong>Exemples :</strong> Montage de capsules vidéos, gestion logistique.</p>' },
+                { title: 'Conseillers ↔ Jeunes pairs', content: '<p class="text-sm"><strong>Type :</strong> Témoignage & inspiration. <strong>Finalité :</strong> Rendre crédible et motivant l’usage des outils. <strong>Exemples :</strong> Intégration d\'un témoignage en atelier.</p>' },
+                { title: 'RIO ↔ Fonctions supports', content: '<p class="text-sm"><strong>Type :</strong> Industrialisation et sécurisation. <strong>Finalité :</strong> Assurer la viabilité administrative et technique. <strong>Exemples :</strong> Suivi budgets, valorisation externe, intégration SI.</p>' },
+                { title: 'Conseillers ↔ Pôles spécialisés', content: '<p class="text-sm"><strong>Type :</strong> Mobilisation expertise thématique. <strong>Finalité :</strong> Enrichir les parcours jeunes. <strong>Exemples :</strong> Mobilisation du pôle santé pour un atelier bien-être.</p>' },
+            ];
+
+            const conclusionAccordionData = [
+                {
+                    title: '1. Pilotage stratégique',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Cohérence, arbitrage, suivi global.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>📄 Note stratégique type</li>
+                            <li>📊 Tableau de bord global</li>
+                            <li>📅 Calendrier partagé COPIL</li>
+                            <li>📑 Registre des arbitrages (SharePoint)</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '2. Conception & outillage',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Transformer les projets en outils duplicables.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>🖼️ Kit de conception outil</li>
+                            <li>📋 Grille de test outil</li>
+                            <li>📘 Guide d’usage standardisé</li>
+                            <li>📂 Bibliothèque SharePoint “Outils validés”</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '3. Diffusion & appropriation',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Faire descendre et vivre les outils dans les pratiques.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>🎤 Kit animation mini-sessions</li>
+                            <li>📑 Trace CEJ/PACEA (champ obligatoire)</li>
+                            <li>🎬 Capsules témoignages jeunes pairs</li>
+                            <li>🗂️ Carnet ambassadeur</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '4. Communication & circulation',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Passer d’une logique cascade → réseau.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>💬 Canal Teams “Pôle Innovation & Outils”</li>
+                            <li>📝 Modèle Flash Report</li>
+                            <li>📑 Template CR réunion de pôle</li>
+                            <li>🛠️ Tableau de suivi des ateliers-sprints</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '5. Décision par subsidiarité',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Rapidité et pertinence des décisions.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>📑 Registre décisionnel par niveau</li>
+                            <li>📘 Charte de subsidiarité</li>
+                            <li>📊 Tableau de suivi décisions locales</li>
+                        </ul>
+                    `
+                },
+                {
+                    title: '6. Évaluation & amélioration continue',
+                    content: `
+                        <p class="mb-2 text-sm text-gray-600">🎯 Mesurer, ajuster et améliorer en continu.</p>
+                        <h5 class="font-semibold">Outils nécessaires :</h5>
+                        <ul class="list-disc list-inside ml-4 text-sm">
+                            <li>📊 Tableau de bord trimestriel</li>
+                            <li>📋 Questionnaire satisfaction rapide</li>
+                            <li>📘 Fiche révision outil</li>
+                            <li>🗂️ Mémoire projet (capitalisation)</li>
+                        </ul>
+                    `
+                }
+            ];
+            
+            // --- FUNCTIONS ---
+            
+            const placeItemsOnCircle = (items, containerId, radius, itemClass) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                const angleStep = (2 * Math.PI) / items.length;
+                items.forEach((item, index) => {
+                    const angle = index * angleStep - (Math.PI / 2);
+                    const x = radius * Math.cos(angle);
+                    const y = radius * Math.sin(angle);
+                    const itemEl = document.createElement('div');
+                    itemEl.className = itemClass;
+                    itemEl.style.transform = `translate(${x}px, ${y}px)`;
+                    itemEl.innerHTML = item.html;
+                    container.appendChild(itemEl);
+                });
+            };
+
+            const createAccordion = (containerId, data) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                container.innerHTML = ''; // Clear existing content
+                data.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'border-b border-gray-200';
+                    div.innerHTML = `
+                        <button class="w-full flex justify-between items-center py-3 text-left text-gray-700 hover:text-indigo-600 focus:outline-none" data-accordion-trigger>
+                            <span class="font-semibold">${item.title}</span>
+                            <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="accordion-content max-h-0" style="max-height: 0px;">
+                            <div class="p-4 pt-0 text-gray-600">${item.content}</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            };
+
+            // --- INITIALIZATION ---
+
+            // Place Circle 1: Teams
+            placeItemsOnCircle(teams.map(t => ({ html: `<div class="bg-gray-100 text-gray-700 text-sm font-semibold p-3 rounded-full shadow-md text-center w-32">${t.name}</div>` })), 'circle1', 250, 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2');
+            // Place Circle 2: Connectors
+            placeItemsOnCircle(connectors.map(c => ({ html: `<div class="flex flex-col items-center text-center w-28" style="color: var(--mlpb-blue);"><div class="p-3 rounded-full shadow-lg" style="background-color: #e0f2fe;">${c.icon}</div><span class="text-xs font-semibold mt-2">${c.name}</span></div>` })), 'circle2', 360, 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2');
+            
+            // Place Circle 3: Services
+            const serviceContainer = document.getElementById('circle3');
+            if (serviceContainer) {
+                const serviceRadius = 490;
+                const angleStep = (2 * Math.PI) / services.length;
+                services.forEach((service, index) => {
+                    const angle = index * angleStep - (Math.PI / 2);
+                    const x = serviceRadius * Math.cos(angle);
+                    const y = serviceRadius * Math.sin(angle);
+                    const bubble = document.createElement('div');
+                    bubble.className = `service-bubble flex flex-col items-center justify-center text-center w-36 h-36 p-3 rounded-full border-2 shadow-lg ${service.colorClass}`;
+                    bubble.style.transform = `translate(${x}px, ${y}px)`;
+                    bubble.dataset.id = service.id;
+                    bubble.innerHTML = `${service.icon}<span class="font-bold text-sm mt-2">${service.name}</span>`;
+                    serviceContainer.appendChild(bubble);
+                });
+            }
+
+            // Mobile view generation
+            const mobileContainer = document.querySelector('.mobile-view');
+            if (mobileContainer) {
+                services.forEach(service => {
+                    const card = document.createElement('div');
+                    card.className = `p-4 rounded-lg border-2 ${service.colorClass}`;
+                    card.innerHTML = `<div class="flex items-center justify-between cursor-pointer" data-id="${service.id}"><div class="flex items-center">${service.icon}<h4 class="font-bold ml-4">${service.name}</h4></div><svg class="w-6 h-6 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></div><div class="details-panel mt-2 pl-2">${service.details}</div>`;
+                    mobileContainer.appendChild(card);
+                });
+            }
+
+            // Create Accordions
+            createAccordion('accordion-container', accordionData);
+            createAccordion('process-accordion-container', processAccordionData);
+            createAccordion('rio-accordion-container', rioAccordionData);
+            createAccordion('ambassadeurs-accordion-container', ambassadeursAccordionData);
+            createAccordion('interactions-accordion-container', interactionsAccordionData);
+            createAccordion('conclusion-accordion-container', conclusionAccordionData);
+
+            // --- EVENT LISTENERS ---
+            
+            const detailsContainer = document.getElementById('details-container');
+            let lastActiveBubble = null;
+
+            const handleServiceClick = (id) => {
+                const service = services.find(s => s.id === id);
+                if (!service || !detailsContainer) return;
+
+                detailsContainer.innerHTML = `<div class="flex items-center text-xl font-bold ${service.colorClass.replace('bg-', 'text-').replace('f5', '700').replace('ff', '700').replace('f8', '700').replace('f2', '700').replace('fa', '700')}">${service.icon.replace('w-8 h-8', 'w-10 h-10')}<h3 class="ml-4">${service.name}</h3></div><div class="mt-4 text-gray-700">${service.details}</div>`;
+                
+                if (lastActiveBubble) {
+                    lastActiveBubble.classList.remove('ring-4', 'ring-offset-2');
+                }
+                const activeBubble = document.querySelector(`.service-bubble[data-id="${id}"]`);
+                if (activeBubble) {
+                    activeBubble.classList.add('ring-4', 'ring-offset-2', service.colorClass.replace('bg-', 'ring-'));
+                    lastActiveBubble = activeBubble;
+                }
+            };
+            
+            document.querySelector('.ecosystem-container')?.addEventListener('click', (e) => {
+                const bubble = e.target.closest('.service-bubble');
+                if (bubble) handleServiceClick(bubble.dataset.id);
             });
-            
-            // Show target slide
-            document.getElementById(`slide-${index}`).classList.add('active');
-            
-            // Update navigation dots
-            document.querySelectorAll('.nav-dot').forEach((dot, i) => {
-                if (i === index) {
-                    dot.classList.add('active');
-                } else {
-                    dot.classList.remove('active');
+
+            document.querySelector('.mobile-view')?.addEventListener('click', (e) => {
+                const cardHeader = e.target.closest('[data-id]');
+                if (cardHeader) {
+                    const panel = cardHeader.nextElementSibling;
+                    const icon = cardHeader.querySelector('svg:last-child');
+                    const isOpen = panel.classList.contains('open');
+                    document.querySelectorAll('.mobile-view .details-panel').forEach(p => {
+                        p.classList.remove('open');
+                        p.previousElementSibling.querySelector('svg:last-child').classList.remove('rotate-180');
+                    });
+                    if (!isOpen) {
+                        panel.classList.add('open');
+                        icon.classList.add('rotate-180');
+                    }
                 }
             });
             
-            // Update progress bar
-            const progress = ((index + 1) / totalSlides) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            const handleAccordionClick = (e) => {
+                const trigger = e.target.closest('[data-accordion-trigger]');
+                if (trigger) {
+                    const allAccordionsInContainer = trigger.closest('.space-y-2').querySelectorAll('.accordion-content');
+                    const allIconsInContainer = trigger.closest('.space-y-2').querySelectorAll('[data-accordion-trigger] svg');
+
+                    const content = trigger.nextElementSibling;
+                    const icon = trigger.querySelector('svg');
+                    const isOpen = content.style.maxHeight !== '0px';
+                    
+                    allAccordionsInContainer.forEach(c => c.style.maxHeight = '0px');
+                    allIconsInContainer.forEach(i => i.classList.remove('rotate-180'));
+
+                    if (!isOpen) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        icon.classList.add('rotate-180');
+                    }
+                }
+            };
             
-            currentSlide = index;
-        }
+            document.getElementById('accordion-container')?.addEventListener('click', handleAccordionClick);
+            document.getElementById('process-accordion-container')?.addEventListener('click', handleAccordionClick);
+            document.getElementById('rio-accordion-container')?.addEventListener('click', handleAccordionClick);
+            document.getElementById('ambassadeurs-accordion-container')?.addEventListener('click', handleAccordionClick);
+            document.getElementById('interactions-accordion-container')?.addEventListener('click', handleAccordionClick);
+            document.getElementById('conclusion-accordion-container')?.addEventListener('click', handleAccordionClick);
 
-        function nextSlide() {
-            const next = (currentSlide + 1) % totalSlides;
-            showSlide(next);
-        }
-
-        function prevSlide() {
-            const prev = (currentSlide - 1 + totalSlides) % totalSlides;
-            showSlide(prev);
-        }
-
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') {
-                e.preventDefault();
-                nextSlide();
-            } else if (e.key === 'ArrowLeft') {
-                e.preventDefault();
-                prevSlide();
-            }
         });
-
-        // Auto-advance (optional - uncomment to enable)
-        // setInterval(nextSlide, 10000);
-
-        // Initialize
-        showSlide(0);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'975a2e4ce69cd5b4',t:'MTc1NjI4MzE1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
-
